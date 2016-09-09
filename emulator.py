@@ -9,6 +9,8 @@ from mininet.log import setLogLevel
 from mininet.node import CPULimitedHost
 from mininet.link import TCLink
 
+from ethernet import Ethernet
+
 def checkDupEth(config):
     hosts = list()
     nodes = list()
@@ -30,40 +32,22 @@ def checkDupEth(config):
         if nodes.count(i) > 1:
             raise RuntimeError("Invalid topology: %s has duplicate eth interface" %i)
 
-def createTopo(net, config):
-    
-    if ('cloud' in config): 
-        for i in config['cloud']:
-            cpu = i['cpu'] if 'cpu' in i else 1.0
-            host = net.addHost(i['name'], cpu=cpu)
-    if ('fog' in config): 
-        for i in config['fog']:
-            cpu = i['cpu'] if 'cpu' in i else 1.0
-            host = net.addHost(i['name'], cpu=cpu)
-    if ('device' in config):
-        for i in config['device']:
-            cpu = i['cpu'] if 'cpu' in i else 1.0
-            host = net.addHost(i['name'], cpu=cpu)
-    if ('switch' in config):
-        for i in config['switch']:
-            net.addSwitch(i['name'])
+def addWiFi(net, config):    
     if ('station' in config):
         for i in config['station']:
             net.addStation(i['name'])
-    if ('link' in config):
-        for i in config['link']:
-            bw = i['bw'] if 'bw' in i else 100
-            delay = i['delay'] if 'delay' in i else '0ms'
-            loss = i['loss'] if 'loss' in i else 0
-            net.addLink(i['node1'], i['node2'], bw=bw, delay=delay, loss=loss)
+    if ('baseStation' in config):
+        for i in config['baseStation']:
+           net.addBaseStation(i['name'])
 
 if __name__ == '__main__':
     script, filename = argv
     data = open(filename)
     config = load(data)
-    checkDupEth(config) 
-    net = Mininet(host=CPULimitedHost, link=TCLink)
-    createTopo(net, config)
+    checkDupEth(config)
+    topo = Ethernet(config) 
+    net = Mininet(topo, host=CPULimitedHost, link=TCLink)
+    #addWiFi(net,config)
     setLogLevel('info')
     net.start()
 

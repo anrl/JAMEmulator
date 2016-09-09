@@ -31,7 +31,7 @@ station:
  - name: sta4
    position: [20,20,20]
 baseStation:
- - name: 'ap1'
+ - name: 'ap2'
 link:
  - node1: cloud1
    node2: s0
