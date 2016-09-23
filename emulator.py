@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-from sys import argv, exit, stdout
+from sys import argv, exit, __stdout__
 from yaml import load
 from select import poll, POLLIN
 from subprocess import Popen, PIPE
@@ -126,13 +126,6 @@ def monitorFiles(outfiles, timeoutms):
             t.terminate()
         devnull.close()  # Not really necessary
 
-def cleanUp():
-    print "Cleaning up..." 
-    save_stdout = stdout
-    stdout = open('trash', 'w')
-    Cleanup.cleanup()
-    stdout = save_stdout
-
 if __name__ == '__main__':    
     if len(argv) < 2: 
         print "usage: sudo python emulator.py config"
@@ -156,5 +149,5 @@ if __name__ == '__main__':
         app.mainloop()
         net.stop()
     except KeyboardInterrupt:
-        cleanUp()
+        Cleanup.cleanup()
         

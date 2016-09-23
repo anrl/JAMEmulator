@@ -9,7 +9,7 @@ from mininet.util import quietRun
 class Console(Frame):
     "A simple console on a host."
 
-    def __init__(self, parent, net, node, height=10, width=32, title='Node'):
+    def __init__(self, parent, net, node, height=15, width=52, title='Node'):
         Frame.__init__(self, parent)
 
         self.net = net
@@ -19,7 +19,8 @@ class Console(Frame):
 
         # Initialize widget styles
         self.buttonStyle = {'font': 'Monaco 7 bold', 'fg':'white', 'bg': 'grey15',
-                            'activeforeground':'green2', 'activebackground':'grey15'}
+                            'activeforeground':'green2', 'activebackground':'grey15',
+                            'highlightbackground':'grey15'}
         self.textStyle = {
             'font': 'Monaco 7',
             'bg': 'black',
@@ -142,7 +143,8 @@ class ConsoleApp(Frame):
     "Simple Tk consoles for Mininet."
 
     menuStyle = {'font': 'Geneva 7 bold', 'fg':'white', 'bg':'grey15', 
-                 'activeforeground':'green2', 'activebackground':'grey15'}
+                 'activeforeground':'green2', 'activebackground':'grey15',
+                 'highlightbackground':'grey15'}
 
     def __init__(self, net, parent=None, width=3):
         Frame.__init__(self, parent, bg='grey15')
@@ -178,7 +180,7 @@ class ConsoleApp(Frame):
 
     def createConsoles(self, parent, nodes, width, title):
         "Create a grid of consoles in a frame."
-        f = Frame(parent)
+        f = Frame(parent, bg="grey15")
         # Create consoles
         consoles = []
         index = 0
@@ -202,7 +204,7 @@ class ConsoleApp(Frame):
 
     def createMenuBar(self):
         "Create and return a menu (really button) bar."
-        f = Frame(self)
+        f = Frame(self, bg="grey15")
         buttons = [
             ('Hosts', lambda: self.select('hosts')),
             ('Switches', lambda: self.select('switches')),
