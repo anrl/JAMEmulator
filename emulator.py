@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-from sys import argv, exit
+from sys import argv, exit, stdout
 from yaml import load
 from select import poll, POLLIN
 from subprocess import Popen, PIPE
@@ -10,6 +10,10 @@ from mininet.topo import Topo
 from mininet.log import setLogLevel
 from mininet.node import CPULimitedHost
 from mininet.link import TCLink
+from mininet.cli import CLI
+from mininet.clean import Cleanup
+
+from console import ConsoleApp
 
 class Ethernet(Topo):
     def build(self, config, isWiFi=True):
@@ -56,6 +60,37 @@ def checkDupEth(config):
         if nodes.count(i) > 1:
             raise RuntimeError("Invalid topology: %s has duplicate eth interface" %i)
 
+
+def logOutput(config, outfiles, errfiles):   
+    if ('cloud' in config): 
+        for i in config['cloud']:
+            if ('cmd' in i):
+                h = net.get(i['name'])
+                outfiles[h] = '/tmp/%s.out' % h.name
+                errfiles[h] = '/tmp/%s.err' % h.name
+                h.cmd('echo >', outfiles[h])
+                h.cmd('echo >', errfiles[h])
+                h.cmdPrint(i['cmd'], '>', outfiles[h], '2>', errfiles[h], '&')
+    if ('fog' in config): 
+        for i in config['fog']:
+            if ('cmd' in i):
+                h = net.get(i['name'])
+                outfiles[h] = '/tmp/%s.out' % h.name
+                errfiles[h] = '/tmp/%s.err' % h.name
+                h.cmd('echo >', outfiles[h])
+                h.cmd('echo >', errfiles[h])
+                h.cmdPrint(i['cmd'], '>', outfiles[h], '2>', errfiles[h], '&')
+    if ('device' in config):
+        for i in config['device']:
+            if ('cmd' in i):
+                h = net.get(i['name'])
+                outfiles[h] = '/tmp/%s.out' % h.name
+                errfiles[h] = '/tmp/%s.err' % h.name
+                h.cmd('echo >', outfiles[h])
+                h.cmd('echo >', errfiles[h])
+                h.cmdPrint(i['cmd'], '>', outfiles[h], '2>', errfiles[h], '&')
+
+
 def monitorFiles(outfiles, timeoutms):
     "Monitor set of files and return [(host, line)...]"
     devnull = open( '/dev/null', 'w' )
@@ -91,51 +126,35 @@ def monitorFiles(outfiles, timeoutms):
             t.terminate()
         devnull.close()  # Not really necessary
 
+def cleanUp():
+    print "Cleaning up..." 
+    save_stdout = stdout
+    stdout = open('trash', 'w')
+    Cleanup.cleanup()
+    stdout = save_stdout
+
 if __name__ == '__main__':    
     if len(argv) < 2: 
-        print "usage: sudo python emulator.py config.yaml"
+        print "usage: sudo python emulator.py config"
         exit()
     script, filename = argv
     data = open(filename)
     config = load(data)
-
     checkDupEth(config)
-    setLogLevel('info')
-    topo = Ethernet(config) 
-    net = Mininet(topo, host=CPULimitedHost, link=TCLink)
-    net.addNAT().configDefault()
-    net.start()
-    outfiles, errfiles = {}, {}
-
-    if ('cloud' in config): 
-        for i in config['cloud']:
-            if ('cmd' in i):
-                h = net.get(i['name'])
-                outfiles[h] = '/tmp/%s.out' % h.name
-                errfiles[h] = '/tmp/%s.err' % h.name
-                h.cmd('echo >', outfiles[h])
-                h.cmd('echo >', errfiles[h])
-                h.cmdPrint(i['cmd'], '>', outfiles[h], '2>', errfiles[h], '&')
-    if ('fog' in config): 
-        for i in config['fog']:
-            if ('cmd' in i):
-                h = net.get(i['name'])
-                outfiles[h] = '/tmp/%s.out' % h.name
-                errfiles[h] = '/tmp/%s.err' % h.name
-                h.cmd('echo >', outfiles[h])
-                h.cmd('echo >', errfiles[h])
-                h.cmdPrint(i['cmd'], '>', outfiles[h], '2>', errfiles[h], '&')
-    if ('device' in config):
-        for i in config['device']:
-            if ('cmd' in i):
-                h = net.get(i['name'])
-                outfiles[h] = '/tmp/%s.out' % h.name
-                errfiles[h] = '/tmp/%s.err' % h.name
-                h.cmd('echo >', outfiles[h])
-                h.cmd('echo >', errfiles[h])
-                h.cmdPrint(i['cmd'], '>', outfiles[h], '2>', errfiles[h], '&')
-
-    for host, line in monitorFiles(outfiles, timeoutms=500):
-        if host:
-            print '%s: %s' % (host.name, line)
-    net.stop()
+    #setLogLevel('info')
+    try:
+        topo = Ethernet(config) 
+        net = Mininet(topo, host=CPULimitedHost, link=TCLink)
+        net.addNAT().configDefault()
+        net.start()
+        #outfiles, errfiles = {}, {}
+        #logOutput(config, outfiles, errfiles)
+        # for host, line in monitorFiles(outfiles, timeoutms=500):
+        #     if host:
+        #         print '%s: %s' % (host.name, line)
+        app = ConsoleApp(net)
+        app.mainloop()
+        net.stop()
+    except KeyboardInterrupt:
+        cleanUp()
+        
