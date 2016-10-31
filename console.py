@@ -28,10 +28,11 @@ class Console(Frame):
             'width': self.width,
             'height': self.height,
             'relief': 'sunken',
-            'insertbackground': 'green',
-            'highlightcolor': 'green',
+            'insertbackground': 'green2',
+            'highlightcolor': 'green2',
+            'highlightbackground': 'grey15',
             'selectforeground': 'black',
-            'selectbackground': 'green'
+            'selectbackground': 'green2'
         }
         # Set up widgets
         self.text = self.makeWidgets()
