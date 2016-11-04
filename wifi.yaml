@@ -5,14 +5,12 @@
  #                           [ cloud1 ]
  #                               |
  #                               |          
- #        [ fog1 ]---[ s1 ]---[ s0 ]---[ s2 ]---[ fog2 ] 
- #                      |                 |
- #                 -----------            |
- #                 |         |            |
- #             [ dev1 ]   [ dev2 ]    [ dev3 ]
+ #                  [ fog1 ]---[ s0 ]---[ ap1 ] 
+ #                                         |
+ #                               ---------------------- 
+ #                               |         |          |
+ #                           [ mob1 ]   [ mob2 ]  [ mob3 ]
  #
- #
- # There are 3 types of stationary host nodes supported by the emulator: cloud, fog and device
 
 cloud:
  - name: cloud1              # required - specifies the name of the host node
@@ -22,34 +20,30 @@ fog:
  - name: fog1                # required - specifies the name of the host node
    cpu: 0.2                  # optional - places a restriction on the amount of cpu (%) available to host
    cmd: 'ping -c 10 8.8.8.8' # optional - specifies a command to run on the host node. Hosts can run any command available on the OS
- - name: fog2
-device:
- - name: dev1                # required - specifies the name of the host node
+mobile:
+ - name: mob1                # required - specifies the name of the host node
    cpu: 0.01                 # optional - places a restriction on the amount of cpu (%) available to host
    cmd: 'ping -c 10 8.8.8.8' # optional - specifies a command to run on the host node. Hosts can run any command available on the OS
- - name: dev2
- - name: dev3
+ - name: mob2
+ - name: mob3
 switch:
  - name: s0                  # required - specifies the name of the switch
- - name: s1
- - name: s2
+accessPoint:
+ - name: ap0                 # required - specifies the name of the access point
 ethLink:
  - node1: cloud1             # required - name of first node in the link
    node2: s0                 # required - name of second node in the link
-   bw: 200                   # optional - specifies the link bandwidth (Mb). Default is 100
-   delay: '1ms'              # optional - specifies the link delay. Default is 0ms
-   loss: 0.5                 # optional - specifies the link loss rate (%). Default is 0 
+   bw: 200                   # optional (eth links only) - specifies the link bandwidth (Mb). Default is 100 
+   delay: '1ms'              # optional (eth links only) - specifies the link delay. Default is 0ms
+   loss: 0.5                 # optional (eth links only) - specifies the link loss rate (%). Default is 0
  - node1: fog1
-   node2: s1
- - node1: fog2
-   node2: s2
+   node2: s0
  - node1: s0
-   node2: s1
- - node1: s0
-   node2: s2
- - node1: s1
-   node2: dev1
- - node1: s1
-   node2: dev2
- - node1: s2
-   node2: dev3
+   node2: ap0
+wifiLink:
+ - node1: mob1               # required - name of first node in the link
+   node2: ap0                # required - name of second node in the link
+ - node1: mob2
+   node2: ap0
+ - node1: mob3
+   node2: ap0
