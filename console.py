@@ -1,4 +1,4 @@
-import re
+import re, os
 
 from Tkinter import Frame, Button, Label, Text, Scrollbar, Canvas, Wm, READABLE
 
@@ -167,6 +167,7 @@ class ConsoleApp(Frame):
         self.selected = None
         self.select('hosts')
         self.cframe.pack(expand=True, fill='both')
+
         cleanUpScreens()
         # Close window gracefully
         Wm.wm_protocol(self.top, name='WM_DELETE_WINDOW', func=self.quit)
