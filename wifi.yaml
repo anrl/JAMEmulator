@@ -39,9 +39,9 @@ link:
  - node1: fog1
    node2: s0
  - node1: s0
-   node2: ap0
- - node1: mob1               
-   node2: ap0         
+   node2: ap0        
+ - node1: mob1              
+   node2: ap0                
  - node1: mob2
    node2: ap0
  - node1: mob3
