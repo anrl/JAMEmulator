@@ -18,14 +18,14 @@ from console import ConsoleApp
 def checkDupEth(config):
     hosts = list()
     nodes = list()
-    groups = ['cloud', 'fog', 'device']     
+    groups = ['cloud', 'fog', 'device', 'mobile'] 
     
     for i in groups:
         if (i in config):
             for j in config[i]:
                 hosts.append(j['name'])
-    if ('ethLink' in config):
-        for i in config['ethLink']:
+    if ('link' in config):
+        for i in config['link']:
             nodes.append(i['node1'])
             nodes.append(i['node2'])
     for i in hosts:
@@ -113,8 +113,7 @@ if __name__ == '__main__':
                 bw = i['bw'] if 'bw' in i else 100
                 delay = i['delay'] if 'delay' in i else '0ms'
                 loss = i['loss'] if 'loss' in i else 0
-                net.addLink(i['node1'], i['node2'], bw=bw, delay=delay, loss=loss)            
-        
+                net.addLink(i['node1'], i['node2'], bw=bw, delay=delay, loss=loss)             
         net.build()
         net.addNAT().configDefault()
         c0.start()
@@ -131,3 +130,4 @@ if __name__ == '__main__':
         net.stop()
     except:
         Cleanup.cleanup()
+        raise
