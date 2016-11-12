@@ -125,8 +125,9 @@ if __name__ == '__main__':
         # for host, line in monitorFiles(outfiles, timeoutms=500):
         #     if host:
         #         print '%s: %s' % (host.name, line)
-        app = ConsoleApp(net)
-        app.mainloop()
+        # app = ConsoleApp(net)
+        # app.mainloop()
+        CLI(net)
         net.stop()
     except:
         Cleanup.cleanup()

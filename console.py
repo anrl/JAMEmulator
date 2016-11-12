@@ -147,30 +147,36 @@ class ConsoleApp(Frame):
                  'activeforeground':'green2', 'activebackground':'grey15',
                  'highlightbackground':'grey15'}
 
-    def __init__(self, net, parent=None, width=3):
+    def __init__(self, net, parent=None, width=4):
         Frame.__init__(self, parent, bg='grey15')
         self.top = self.winfo_toplevel()
         self.top.title('Mininet')
         self.net = net
         self.menubar = self.createMenuBar()
-        cframe = self.cframe = Frame(self)
-        self.consoles = {}  # consoles themselves
-        titles = {
-            'hosts': 'Host',
-            'switches': 'Switch',
-            'controllers': 'Controller'
-        }
-        for name in titles:
-            nodes = getattr(net, name)
-            frame, consoles = self.createConsoles(cframe, nodes, width, titles[name])
-            self.consoles[name] = Object(frame=frame, consoles=consoles)
-        self.selected = None
-        self.select('hosts')
-        self.cframe.pack(expand=True, fill='both')
 
-        cleanUpScreens()
+        termf = Frame(self, height=150, width=495, bg='grey15')
+        termf.pack(fill='both', expand=True)
+        wid = termf.winfo_id()
+        os.system('xterm -into %d -geometry %dx%d -cm -fg green -ms white -b 5 &' % (wid, 80, 150))
+
+        # cframe = self.cframe = Frame(self)
+        # self.consoles = {}  # consoles themselves
+        # titles = {
+        #     'hosts': 'Host',
+        #     'switches': 'Switch',
+        #     'controllers': 'Controller'
+        # }
+        # for name in titles:
+        #     nodes = getattr(net, name)
+        #     #frame, consoles = self.createConsoles(cframe, nodes, width, titles[name])
+        #     self.consoles[name] = Object(frame=frame, consoles=consoles)
+        # self.selected = None
+        # self.select('hosts')
+        # self.cframe.pack(expand=True, fill='both')
+
+        # cleanUpScreens()
         # Close window gracefully
-        Wm.wm_protocol(self.top, name='WM_DELETE_WINDOW', func=self.quit)
+        # Wm.wm_protocol(self.top, name='WM_DELETE_WINDOW', func=self.quit)
         self.pack(expand=True, fill='both')
 
     def setOutputHook(self, fn=None, consoles=None):
