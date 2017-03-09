@@ -8,7 +8,7 @@ from subprocess import Popen, PIPE
 from mininet.net import Mininet
 from mininet.topo import Topo
 from mininet.log import setLogLevel
-from mininet.node import CPULimitedHost, Controller, OVSKernelSwitch
+from mininet.node import CPULimitedHost, Controller, OVSKernelSwitch, OVSKernelAP
 from mininet.link import TCLink
 from mininet.cli import CLI
 from mininet.clean import Cleanup
@@ -90,7 +90,7 @@ if __name__ == '__main__':
     #setLogLevel('info')
     try:
         net = Mininet(host=CPULimitedHost, controller=Controller, 
-                      link=TCLink, switch=OVSKernelSwitch)
+                      link=TCLink, switch=OVSKernelSwitch, accessPoint=OVSKernelAP)
         c0 = net.addController('c0')   
         groups = ['cloud', 'fog', 'device']     
         for i in groups:
@@ -107,7 +107,8 @@ if __name__ == '__main__':
                 net.addSwitch(i['name'])
         if ('accessPoint' in config):
             for i in config['accessPoint']:
-                net.addBaseStation(i['name'])       
+                net.addAccessPoint(i['name'])
+        net.configureWifiNodes()       
         if ('link' in config):
             for i in config['link']:
                 bw = i['bw'] if 'bw' in i else 100
