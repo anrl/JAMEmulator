@@ -8,7 +8,8 @@ from subprocess import Popen, PIPE
 from mininet.net import Mininet
 from mininet.topo import Topo
 from mininet.log import setLogLevel
-from mininet.node import CPULimitedHost, Controller, OVSKernelSwitch, OVSKernelAP
+from mininet.node import CPULimitedHost, Controller 
+from mininet.node import OVSKernelSwitch, OVSKernelAP
 from mininet.link import TCLink
 from mininet.cli import CLI
 from mininet.clean import Cleanup
@@ -30,7 +31,8 @@ def checkDupEth(config):
             nodes.append(i['node2'])
     for i in hosts:
         if nodes.count(i) > 1:
-            raise RuntimeError("Invalid topology: %s has duplicate eth interface" %i)
+            raise RuntimeError("Invalid topology:" 
+                               + "%s has duplicate eth" %i)
 
 
 def logOutput(group, config, outfiles, errfiles):   
@@ -42,7 +44,8 @@ def logOutput(group, config, outfiles, errfiles):
                 errfiles[h] = '/tmp/%s.err' % h.name
                 h.cmd('echo >', outfiles[h])
                 h.cmd('echo >', errfiles[h])
-                h.cmdPrint(i['cmd'], '>', outfiles[h], '2>', errfiles[h], '&')
+                h.cmdPrint(i['cmd'], '>', outfiles[h], '2>', 
+                           errfiles[h], '&')
 
 
 def monitorFiles(outfiles, timeoutms):
@@ -87,21 +90,21 @@ if __name__ == '__main__':
     data = open(filename)
     config = load(data)
     checkDupEth(config)
-    #setLogLevel('info')
+    setLogLevel('info')
     try:
-        net = Mininet(host=CPULimitedHost, controller=Controller, 
-                      link=TCLink, switch=OVSKernelSwitch, accessPoint=OVSKernelAP)
+        net = Mininet(controller=Controller, link=TCLink, #host=CPULimitedHost
+                      switch=OVSKernelSwitch, accessPoint=OVSKernelAP)
         c0 = net.addController('c0')   
         groups = ['cloud', 'fog', 'device']     
         for i in groups:
             if (i in config): 
                 for j in config[i]:
                     cpu = j['cpu'] if 'cpu' in j else 1.0
-                    net.addHost(j['name'], cpu=cpu)
+                    net.addHost(j['name']) #, cpu=cpu)  There is currently a bug with Mininet-Wifi and CPULimitedHost
         if ('mobile' in config): 
             for i in config['mobile']:
                 cpu = i['cpu'] if 'cpu' in i else 1.0
-                net.addStation(i['name'], cpu=cpu)
+                net.addStation(i['name']) #, cpu=cpu)
         if ('switch' in config):
             for i in config['switch']:
                 net.addSwitch(i['name'])
@@ -114,11 +117,12 @@ if __name__ == '__main__':
                 bw = i['bw'] if 'bw' in i else 100
                 delay = i['delay'] if 'delay' in i else '0ms'
                 loss = i['loss'] if 'loss' in i else 0
-                net.addLink(i['node1'], i['node2'], bw=bw, delay=delay, loss=loss)             
+                net.addLink(i['node1'], i['node2'],bw=bw, delay=delay, 
+                            loss=loss)             
         net.build()
         net.addNAT().configDefault()
         c0.start()
-        for i in getattr(net, 'switches'): 
+        for i in getattr(net, 'switches'):
             i.start([c0])     
         # outfiles, errfiles = {}, {}
         # for i in groups:
