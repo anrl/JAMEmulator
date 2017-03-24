@@ -154,29 +154,29 @@ class ConsoleApp(Frame):
         self.net = net
         self.menubar = self.createMenuBar()
 
-        termf = Frame(self, height=150, width=495, bg='grey15')
-        termf.pack(fill='both', expand=True)
-        wid = termf.winfo_id()
-        os.system('xterm -into %d -geometry %dx%d -cm -fg green -ms white -b 5 &' % (wid, 80, 150))
+        # termf = Frame(self, height=150, width=495, bg='grey15')
+        # termf.pack(fill='both', expand=True)
+        # wid = termf.winfo_id()
+        # os.system('xterm -into %d -geometry %dx%d -cm -fg green -ms white -b 5 &' % (wid, 80, 150))
 
-        # cframe = self.cframe = Frame(self)
-        # self.consoles = {}  # consoles themselves
-        # titles = {
-        #     'hosts': 'Host',
-        #     'switches': 'Switch',
-        #     'controllers': 'Controller'
-        # }
-        # for name in titles:
-        #     nodes = getattr(net, name)
-        #     #frame, consoles = self.createConsoles(cframe, nodes, width, titles[name])
-        #     self.consoles[name] = Object(frame=frame, consoles=consoles)
-        # self.selected = None
-        # self.select('hosts')
-        # self.cframe.pack(expand=True, fill='both')
+        cframe = self.cframe = Frame(self)
+        self.consoles = {}  # consoles themselves
+        titles = {
+            'hosts': 'Host',
+            'switches': 'Switch',
+            'controllers': 'Controller'
+        }
+        for name in titles:
+            nodes = getattr(net, name)
+            frame, consoles = self.createConsoles(cframe, nodes, width, titles[name])
+            self.consoles[name] = Object(frame=frame, consoles=consoles)
+        self.selected = None
+        self.select('hosts')
+        self.cframe.pack(expand=True, fill='both')
 
-        # cleanUpScreens()
-        # Close window gracefully
-        # Wm.wm_protocol(self.top, name='WM_DELETE_WINDOW', func=self.quit)
+        cleanUpScreens()
+        #Close window gracefully
+        Wm.wm_protocol(self.top, name='WM_DELETE_WINDOW', func=self.quit)
         self.pack(expand=True, fill='both')
 
     def setOutputHook(self, fn=None, consoles=None):

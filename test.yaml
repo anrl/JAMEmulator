@@ -1,0 +1,42 @@
+ # YAML
+mobile:
+ - name: mob1               
+ - name: mob2
+ - name: mob3
+#  - name: mob4                
+#  - name: mob5
+#  - name: mob6
+#  - name: mob7              
+#  - name: mob8
+#  - name: mob9
+#  - name: mob10              
+#  - name: mob11
+#  - name: mob12
+accessPoint:
+ - name: ap0                 
+link:  
+ - node1: mob1              
+   node2: ap0                
+ - node1: mob2
+   node2: ap0
+ - node1: mob3
+   node2: ap0
+#  - node1: mob4
+#    node2: ap0
+#  - node1: mob5
+#    node2: ap0
+#  - node1: mob6              
+#    node2: ap0                
+#  - node1: mob7
+#    node2: ap0
+#  - node1: mob8
+#    node2: ap0
+#  - node1: mob9
+#    node2: ap0
+#  - node1: mob10
+#    node2: ap0
+#  - node1: mob11
+#    node2: ap0
+#  - node1: mob12
+#    node2: ap0
+   

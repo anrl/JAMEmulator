@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-from sys import argv, exit, __stdout__
+from sys import argv, exit
 from yaml import load
 from select import poll, POLLIN
 from subprocess import Popen, PIPE
@@ -117,8 +117,8 @@ if __name__ == '__main__':
                 bw = i['bw'] if 'bw' in i else 100
                 delay = i['delay'] if 'delay' in i else '0ms'
                 loss = i['loss'] if 'loss' in i else 0
-                net.addLink(i['node1'], i['node2'],bw=bw, delay=delay, 
-                            loss=loss)             
+                net.addLink(i['node1'], i['node2'],
+                            bw=bw, delay=delay, loss=loss)             
         net.build()
         net.addNAT().configDefault()
         c0.start()
@@ -130,9 +130,9 @@ if __name__ == '__main__':
         # for host, line in monitorFiles(outfiles, timeoutms=500):
         #     if host:
         #         print '%s: %s' % (host.name, line)
-        # app = ConsoleApp(net)
-        # app.mainloop()
-        CLI(net)
+        app = ConsoleApp(net)
+        app.mainloop()
+        # CLI(net)
         net.stop()
     except:
         Cleanup.cleanup()
