@@ -120,7 +120,7 @@ if __name__ == '__main__':
                 net.addLink(i['node1'], i['node2'],
                             bw=bw, delay=delay, loss=loss)             
         net.build()
-        net.addNAT().configDefault()
+        #net.addNAT().configDefault()
         c0.start()
         for i in getattr(net, 'switches'):
             i.start([c0])     
@@ -130,9 +130,9 @@ if __name__ == '__main__':
         # for host, line in monitorFiles(outfiles, timeoutms=500):
         #     if host:
         #         print '%s: %s' % (host.name, line)
-        app = ConsoleApp(net)
-        app.mainloop()
-        # CLI(net)
+        # app = ConsoleApp(net)
+        # app.mainloop()
+        CLI(net)
         net.stop()
     except:
         Cleanup.cleanup()
