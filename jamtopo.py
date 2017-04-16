@@ -1,45 +1,102 @@
+import inspect
+import os
 from mininext.topo import Topo
+from mininext.services.quagga import QuaggaService
 
 def checkDupEth(config):
     hosts = list()
     nodes = list()
-    groups = ['cloud', 'fog', 'device', 'mobile']
+    groups = ["cloud", "fog", "device"]
 
     for i in groups:
         if (i in config):
             for j in config[i]:
-                hosts.append(j['name'])
-    if ('link' in config):
-        for i in config['link']:
-            nodes.append(i['node1'])
-            nodes.append(i['node2'])
+                hosts.append(j["name"])
+    if ("link" in config):
+        for i in config["link"]:
+            nodes.append(i["node1"])
+            nodes.append(i["node2"])
     for i in hosts:
         if nodes.count(i) > 1:
             raise RuntimeError("Invalid topology:"
-                               + "%s has duplicate eth" %i)
+                               + "%s has duplicate eth interface" %i)
+
 
 class JAMTopo(Topo):
-
     def __init__(self, config):
         Topo.__init__(self)
         checkDupEth(config)
-        groups = ['cloud', 'fog', 'device']
+        groups = ["cloud", "fog", "device"]
         nodes = dict()
+        counter = 0
 
         for i in groups:
             if (i in config):
-                for j in config[i]:
-                    cpu = j['cpu'] if 'cpu' in j else 1.0
-                    nodes[j['name']] = self.addHost(j['name'], cpu=cpu)
-        if ('switch' in config):
-            for i in config['switch']:
-                nodes[i['name']] = self.addSwitch(i['name'])
-        else:
+                for j in config[i]: 
+                    # If host IP isn't specified in config then assign one        
+                    if ("ip" in j): 
+                        ip = j["ip"]
+                    elif (counter < 255):
+                         ip = "10.0.0." + str(counter)
+                         counter += 1
+                    else:
+                        msg = "Max number of hosts reached\n" 
+                        + "To run a larger topology, host IPs " 
+                        + "must be configured explicitly"
+                        raise RuntimeError(msg)
+                    # Check if the CPU resources available to host are restricted
+                    cpu = j["cpu"] if "cpu" in j else 1.0 
+                    nodes[j["name"]] = self.addHost(j["name"], ip=ip, cpu=cpu)
+
+        if (not "switch" in config or len(config["switch"]) == 0):
             raise RuntimeError("Topology must have at least one switch")
-        if ('link' in config):
-            for i in config['link']:
-                bw = i['bw'] if 'bw' in i else 100
-                delay = i['delay'] if 'delay' in i else '0ms'
-                loss = i['loss'] if 'loss' in i else 0
-                self.addLink(nodes[i['node1']], nodes[i['node2']],
-                             bw=bw, delay=delay, loss=loss)
+        else:
+            for i in config["switch"]:
+                nodes[i["name"]] = self.addSwitch(i["name"])
+
+        if ("router" in config):
+            # Directory where this file / script is located"
+            selfPath = os.path.dirname(os.path.abspath(
+            inspect.getfile(inspect.currentframe())))  # script directory
+            # Initialize a service helper for Quagga with default options
+            quaggaSvc = QuaggaService(autoStop=False)
+            # Path configurations for mounts
+            quaggaBaseConfigPath = selfPath + "/configs/"
+            
+            for i in config["router"]:
+                # Create an instance of a host, called a quaggaContainer
+                self.addHost(name=i["name"],
+                             hostname=i["name"],
+                             privateLogDir=True,
+                             privateRunDir=True,
+                             inMountNamespace=True,
+                             inPIDNamespace=True,
+                             inUTSNamespace=True)
+                if ("loIP" in i):
+                    # Add a loopback interface with an IP in router's announced range
+                    self.addNodeLoopbackIntf(node=i["name"], ip=i["loIP"])
+
+                # Configure and setup the Quagga service for this node
+                quaggaSvcConfig = \
+                    {"quaggaConfigPath": quaggaBaseConfigPath + i["name"]}
+                self.addNodeService(node=i["name"], service=quaggaSvc,
+                                    nodeConfig=quaggaSvcConfig)
+        
+        if ("link" in config):
+            for i in config["link"]:            
+                bw = i["bw"] if "bw" in i else 100
+                delay = i["delay"] if "delay" in i else "0ms"
+                loss = i["loss"] if "loss" in i else 0     
+                isDict1 = isinstance(i["node1"], dict)
+                isDict2 = isinstance(i["node2"], dict)
+                
+                if (isDict1 and isDict2):
+                    node1 = i["node1"]
+                    node2 = i["node2"]
+                    self.addLink(node1["name"], node2["name"],
+                                 bw=bw, delay=delay, loss=loss)      
+                elif (not isDict1 and isDict2) or (isDict1 and not isDict2):
+                    raise RuntimeError("Invalid link format")
+                else:
+                    self.addLink(i["node1"], i["node2"],
+                                 bw=bw, delay=delay, loss=loss)

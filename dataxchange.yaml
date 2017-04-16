@@ -1,60 +1,204 @@
 device:
-- name: dev0
-- name: dev1
-- name: dev2
-- name: dev3
-- name: dev4
-- name: dev5
+- name: h0
+- name: h1
+- name: h2
+- name: h3
+- name: h4
+- name: h5
 link:
-- node1: dev0
-  node2: s0
-- node1: dev1
-  node2: s1
-- node1: dev2
-  node2: s2
-- node1: dev3
-  node2: s3
-- node1: dev4
-  node2: s4
-- node1: dev5
-  node2: s5
+- node1:
+    interface: h0-eth0
+    ip: 10.0.0.1/24
+    mac: 00:00:00:00:00:00:01
+    name: h0
+  node2:
+    interface: r0-eth0
+    ip: 10.0.0.2/24
+    mac: 00:00:00:00:00:00:02
+    name: r0
+- node1:
+    interface: h1-eth0
+    ip: 10.0.1.1/24
+    mac: 00:00:00:00:00:01:01
+    name: h1
+  node2:
+    interface: r1-eth0
+    ip: 10.0.1.2/24
+    mac: 00:00:00:00:00:01:02
+    name: r1
+- node1:
+    interface: h2-eth0
+    ip: 10.0.2.1/24
+    mac: 00:00:00:00:00:02:01
+    name: h2
+  node2:
+    interface: r2-eth0
+    ip: 10.0.2.2/24
+    mac: 00:00:00:00:00:02:02
+    name: r2
+- node1:
+    interface: h3-eth0
+    ip: 10.0.3.1/24
+    mac: 00:00:00:00:00:03:01
+    name: h3
+  node2:
+    interface: r3-eth0
+    ip: 10.0.3.2/24
+    mac: 00:00:00:00:00:03:02
+    name: r3
+- node1:
+    interface: h4-eth0
+    ip: 10.0.4.1/24
+    mac: 00:00:00:00:00:04:01
+    name: h4
+  node2:
+    interface: r4-eth0
+    ip: 10.0.4.2/24
+    mac: 00:00:00:00:00:04:02
+    name: r4
+- node1:
+    interface: h5-eth0
+    ip: 10.0.5.1/24
+    mac: 00:00:00:00:00:05:01
+    name: h5
+  node2:
+    interface: r5-eth0
+    ip: 10.0.5.2/24
+    mac: 00:00:00:00:00:05:02
+    name: r5
 - delay: 2.74231221482ms
-  node1: s0
-  node2: s1
+  node1:
+    interface: r0-eth1
+    ip: 172.0.0.0/24
+    mac: ff:00:00:00:00:00:00
+    name: r0
+  node2:
+    interface: r1-eth1
+    ip: 172.0.0.1/24
+    mac: ff:00:00:00:00:00:01
+    name: r1
 - delay: 14.6697754324ms
-  node1: s0
-  node2: s2
+  node1:
+    interface: r0-eth2
+    ip: 172.0.1.0/24
+    mac: ff:00:00:00:00:01:00
+    name: r0
+  node2:
+    interface: r2-eth1
+    ip: 172.0.1.1/24
+    mac: ff:00:00:00:00:01:01
+    name: r2
 - delay: 19.2697920903ms
-  node1: s0
-  node2: s4
+  node1:
+    interface: r0-eth3
+    ip: 172.0.2.0/24
+    mac: ff:00:00:00:00:02:00
+    name: r0
+  node2:
+    interface: r4-eth1
+    ip: 172.0.2.1/24
+    mac: ff:00:00:00:00:02:01
+    name: r4
 - delay: 16.8961143114ms
-  node1: s0
-  node2: s5
+  node1:
+    interface: r0-eth4
+    ip: 172.0.3.0/24
+    mac: ff:00:00:00:00:03:00
+    name: r0
+  node2:
+    interface: r5-eth1
+    ip: 172.0.3.1/24
+    mac: ff:00:00:00:00:03:01
+    name: r5
 - delay: 13.7715142807ms
-  node1: s1
-  node2: s2
+  node1:
+    interface: r1-eth2
+    ip: 172.0.4.0/24
+    mac: ff:00:00:00:00:04:00
+    name: r1
+  node2:
+    interface: r2-eth2
+    ip: 172.0.4.1/24
+    mac: ff:00:00:00:00:04:01
+    name: r2
 - delay: 18.1513846968ms
-  node1: s1
-  node2: s4
+  node1:
+    interface: r1-eth3
+    ip: 172.0.5.0/24
+    mac: ff:00:00:00:00:05:00
+    name: r1
+  node2:
+    interface: r4-eth2
+    ip: 172.0.5.1/24
+    mac: ff:00:00:00:00:05:01
+    name: r4
 - delay: 15.2902891799ms
-  node1: s1
-  node2: s5
+  node1:
+    interface: r1-eth4
+    ip: 172.0.6.0/24
+    mac: ff:00:00:00:00:06:00
+    name: r1
+  node2:
+    interface: r5-eth2
+    ip: 172.0.6.1/24
+    mac: ff:00:00:00:00:06:01
+    name: r5
 - delay: 4.70155389204ms
-  node1: s2
-  node2: s4
+  node1:
+    interface: r2-eth3
+    ip: 172.0.7.0/24
+    mac: ff:00:00:00:00:07:00
+    name: r2
+  node2:
+    interface: r4-eth3
+    ip: 172.0.7.1/24
+    mac: ff:00:00:00:00:07:01
+    name: r4
 - delay: 4.62933860616ms
-  node1: s2
-  node2: s5
+  node1:
+    interface: r2-eth4
+    ip: 172.0.8.0/24
+    mac: ff:00:00:00:00:08:00
+    name: r2
+  node2:
+    interface: r5-eth3
+    ip: 172.0.8.1/24
+    mac: ff:00:00:00:00:08:01
+    name: r5
 - delay: 0.063711078306ms
-  node1: s3
-  node2: s4
+  node1:
+    interface: r3-eth1
+    ip: 172.0.9.0/24
+    mac: ff:00:00:00:00:09:00
+    name: r3
+  node2:
+    interface: r4-eth4
+    ip: 172.0.9.1/24
+    mac: ff:00:00:00:00:09:01
+    name: r4
 - delay: 4.27890600914ms
-  node1: s4
-  node2: s5
+  node1:
+    interface: r4-eth5
+    ip: 172.0.10.0/24
+    mac: ff:00:00:00:00:0a:00
+    name: r4
+  node2:
+    interface: r5-eth4
+    ip: 172.0.10.1/24
+    mac: ff:00:00:00:00:0a:01
+    name: r5
+router:
+- loIP: 10.0.0.0/24
+  name: r0
+- loIP: 10.0.1.0/24
+  name: r1
+- loIP: 10.0.2.0/24
+  name: r2
+- loIP: 10.0.3.0/24
+  name: r3
+- loIP: 10.0.4.0/24
+  name: r4
+- loIP: 10.0.5.0/24
+  name: r5
 switch:
 - name: s0
-- name: s1
-- name: s2
-- name: s3
-- name: s4
-- name: s5

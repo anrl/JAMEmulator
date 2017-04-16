@@ -15,37 +15,55 @@ from mininext.node import Node
 from jamtopo import JAMTopo
 from console import ConsoleApp
 
-def startNAT(root, inetIntf='eth0', subnet='10.0/8'):
+def setupIntfs(net, config):
+    if ("link" in config):
+        for i in config["link"]:
+            node1 = i["node1"]
+            node2 = i["node2"]
+            isDict1 = isinstance(node1, dict)
+            isDict2 = isinstance(node2, dict)
+            
+            if (isDict1 and isDict2):
+                n1 = net.get(node1["name"])
+                n1.setIP(node1["ip"], intf=node1["interface"])
+                n1.setMAC(node1["mac"], intf=node1["interface"])
+
+                n2 = net.get(node2["name"])
+                n2.setIP(node2["ip"], intf=node2["interface"])
+                n2.setMAC(node2["mac"], intf=node2["interface"])
+
+
+def startNAT(root, inetIntf="eth0", subnet="10.0/8"):
     """Start NAT/forwarding between Mininet and external network
-    root: node to access iptables from
-    inetIntf: interface for internet access
-    subnet: Mininet subnet (default 10.0/8)="""
+       root: node to access iptables from
+       inetIntf: interface for internet access
+       subnet: Mininet subnet (default 10.0/8)="""
 
     # Identify the interface connecting to the mininet network
     localIntf =  root.defaultIntf()
     # Flush any currently active rules
-    root.cmd('iptables -F')
-    root.cmd('iptables -t nat -F')
+    root.cmd("iptables -F")
+    root.cmd("iptables -t nat -F")
     # Create default entries for unmatched traffic
-    root.cmd('iptables -P INPUT ACCEPT')
-    root.cmd('iptables -P OUTPUT ACCEPT')
-    root.cmd('iptables -P FORWARD DROP')
+    root.cmd("iptables -P INPUT ACCEPT")
+    root.cmd("iptables -P OUTPUT ACCEPT")
+    root.cmd("iptables -P FORWARD DROP")
     # Configure NAT
-    root.cmd('iptables -I FORWARD -i', localIntf, '-d', subnet, '-j DROP')
-    root.cmd('iptables -A FORWARD -i', localIntf, '-s', subnet, '-j ACCEPT')
-    root.cmd('iptables -A FORWARD -i', inetIntf, '-d', subnet, '-j ACCEPT')
-    root.cmd('iptables -t nat -A POSTROUTING -o ', inetIntf, '-j MASQUERADE')
+    root.cmd("iptables -I FORWARD -i", localIntf, "-d", subnet, "-j DROP")
+    root.cmd("iptables -A FORWARD -i", localIntf, "-s", subnet, "-j ACCEPT")
+    root.cmd("iptables -A FORWARD -i", inetIntf, "-d", subnet, "-j ACCEPT")
+    root.cmd("iptables -t nat -A POSTROUTING -o ", inetIntf, "-j MASQUERADE")
     # Instruct the kernel to perform forwarding
-    root.cmd('sysctl net.ipv4.ip_forward=1')
+    root.cmd("sysctl net.ipv4.ip_forward=1")
 
 
 def stopNAT(root):
     """Stop NAT/forwarding between Mininet and external network"""
     # Flush any currently active rules
-    root.cmd('iptables -F')
-    root.cmd('iptables -t nat -F')
+    root.cmd("iptables -F")
+    root.cmd("iptables -t nat -F")
     # Instruct the kernel to stop forwarding
-    root.cmd('sysctl net.ipv4.ip_forward=0')
+    root.cmd("sysctl net.ipv4.ip_forward=0")
 
 
 def fixNetworkManager(root, intf):
@@ -54,29 +72,29 @@ def fixNetworkManager(root, intf):
        root: a node in the root namespace (for running commands)
        intf: interface name"""
 
-    cfile = '/etc/network/interfaces'
-    line = '\niface %s inet manual\n' % intf
+    cfile = "/etc/network/interfaces"
+    line = "\niface %s inet manual\n" % intf
     config = open(cfile).read()
     if (line) not in config:
-        print '*** Adding', line.strip(), 'to', cfile
-        with open(cfile, 'a') as f:
+        print "*** Adding", line.strip(), "to", cfile
+        with open(cfile, "a") as f:
             f.write(line)
         # Probably need to restart network-manager to be safe -
-        # hopefully this won't disconnect you
-        root.cmd('service network-manager restart')
+        # hopefully this won"t disconnect you
+        root.cmd("service network-manager restart")
 
-def connectToInternet(network, switch, rootip='10.254', subnet='10.0/8'):
+def connectToInternet(network, switch, rootip="10.254", subnet="10.0/8"):
     """Connect the network to the internet
        switch: switch to connect to root namespace
        rootip: address for interface in root namespace
        subnet: Mininet subnet"""
     switch = network.get(switch)
-    prefixLen = subnet.split('/')[1]
+    prefixLen = subnet.split("/")[1]
 
     # Create a node in root namespace
-    root = Node('root', inNamespace=False)
+    root = Node("root", inNamespace=False)
     # Prevent network-manager from interfering with our interface
-    fixNetworkManager(root, 'root-eth0')
+    fixNetworkManager(root, "root-eth0")
     # Create link between root NS and switch
     link = network.addLink(root, switch)
     link.intf1.setIP(rootip, prefixLen)
@@ -87,29 +105,31 @@ def connectToInternet(network, switch, rootip='10.254', subnet='10.0/8'):
 
     # Establish routes from end hosts
     for host in network.hosts:
-        host.cmd('ip route flush root 0/0')
-        host.cmd('route add -net', subnet, 'dev', host.defaultIntf())
-        host.cmd('route add default gw', rootip)
+        host.cmd("ip route flush root 0/0")
+        host.cmd("route add -net", subnet, "dev", host.defaultIntf())
+        host.cmd("route add default gw", rootip)
     return root
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     if len(argv) < 2:
         print "usage: sudo python emulator.py config"
         exit()
     script, filename = argv
     data = open(filename)
     config = load(data)
-    setLogLevel('info')
+    setLogLevel("info")
     try:
         net = MiniNExT(JAMTopo(config), controller=OVSController, link=TCLink,
                        host=CPULimitedHost, switch=OVSKernelSwitch)
+        setupIntfs(net, config)
+        net.start()
         # Configure and start NAT connectivity
-        rootnode = connectToInternet(net, config['switch'][0]['name'])
+        # rootnode = connectToInternet(net, config["switch"][0]["name"])
         print "*** Hosts are running and should have internet connectivity"
         print "*** Type 'exit' or control-D to shut down network"
         CLI(net)
         # Shut down NAT
-        stopNAT(rootnode)
+        # stopNAT(rootnode)
         net.stop()
     except:
         cleanup()
