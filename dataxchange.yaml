@@ -84,127 +84,226 @@ link:
     ip: 10.0.5.2/24
     mac: 00:00:00:00:00:05:02
     name: r5
-- delay: 2.74231221482ms
+- delay: 1.37115610741ms
   node1:
     interface: r0-eth1
     ip: 172.0.0.0/24
     mac: ff:00:00:00:00:00
     name: r0
-  node2:
+    neighbor:
+      ip: 172.0.0.1/24
+      name: r1
+  node2: s1
+- delay: 1.37115610741ms
+  node1:
     interface: r1-eth1
     ip: 172.0.0.1/24
     mac: ff:00:00:00:00:01
     name: r1
-- delay: 14.6697754324ms
+    neighbor:
+      ip: 172.0.0.0/24
+      name: r0
+  node2: s1
+- delay: 7.33488771619ms
   node1:
     interface: r0-eth2
     ip: 172.0.1.0/24
     mac: ff:00:00:00:01:00
     name: r0
-  node2:
+    neighbor:
+      ip: 172.0.1.1/24
+      name: r2
+  node2: s2
+- delay: 7.33488771619ms
+  node1:
     interface: r2-eth1
     ip: 172.0.1.1/24
     mac: ff:00:00:00:01:01
     name: r2
-- delay: 19.2697920903ms
+    neighbor:
+      ip: 172.0.1.0/24
+      name: r0
+  node2: s2
+- delay: 9.63489604513ms
   node1:
     interface: r0-eth3
     ip: 172.0.2.0/24
     mac: ff:00:00:00:02:00
     name: r0
-  node2:
+    neighbor:
+      ip: 172.0.2.1/24
+      name: r4
+  node2: s3
+- delay: 9.63489604513ms
+  node1:
     interface: r4-eth1
     ip: 172.0.2.1/24
     mac: ff:00:00:00:02:01
     name: r4
-- delay: 16.8961143114ms
+    neighbor:
+      ip: 172.0.2.0/24
+      name: r0
+  node2: s3
+- delay: 8.4480571557ms
   node1:
     interface: r0-eth4
     ip: 172.0.3.0/24
     mac: ff:00:00:00:03:00
     name: r0
-  node2:
+    neighbor:
+      ip: 172.0.3.1/24
+      name: r5
+  node2: s4
+- delay: 8.4480571557ms
+  node1:
     interface: r5-eth1
     ip: 172.0.3.1/24
     mac: ff:00:00:00:03:01
     name: r5
-- delay: 13.7715142807ms
+    neighbor:
+      ip: 172.0.3.0/24
+      name: r0
+  node2: s4
+- delay: 6.88575714033ms
   node1:
     interface: r1-eth2
     ip: 172.0.4.0/24
     mac: ff:00:00:00:04:00
     name: r1
-  node2:
+    neighbor:
+      ip: 172.0.4.1/24
+      name: r2
+  node2: s5
+- delay: 6.88575714033ms
+  node1:
     interface: r2-eth2
     ip: 172.0.4.1/24
     mac: ff:00:00:00:04:01
     name: r2
-- delay: 18.1513846968ms
+    neighbor:
+      ip: 172.0.4.0/24
+      name: r1
+  node2: s5
+- delay: 9.07569234842ms
   node1:
     interface: r1-eth3
     ip: 172.0.5.0/24
     mac: ff:00:00:00:05:00
     name: r1
-  node2:
+    neighbor:
+      ip: 172.0.5.1/24
+      name: r4
+  node2: s6
+- delay: 9.07569234842ms
+  node1:
     interface: r4-eth2
     ip: 172.0.5.1/24
     mac: ff:00:00:00:05:01
     name: r4
-- delay: 15.2902891799ms
+    neighbor:
+      ip: 172.0.5.0/24
+      name: r1
+  node2: s6
+- delay: 7.64514458997ms
   node1:
     interface: r1-eth4
     ip: 172.0.6.0/24
     mac: ff:00:00:00:06:00
     name: r1
-  node2:
+    neighbor:
+      ip: 172.0.6.1/24
+      name: r5
+  node2: s7
+- delay: 7.64514458997ms
+  node1:
     interface: r5-eth2
     ip: 172.0.6.1/24
     mac: ff:00:00:00:06:01
     name: r5
-- delay: 4.70155389204ms
+    neighbor:
+      ip: 172.0.6.0/24
+      name: r1
+  node2: s7
+- delay: 2.35077694602ms
   node1:
     interface: r2-eth3
     ip: 172.0.7.0/24
     mac: ff:00:00:00:07:00
     name: r2
-  node2:
+    neighbor:
+      ip: 172.0.7.1/24
+      name: r4
+  node2: s8
+- delay: 2.35077694602ms
+  node1:
     interface: r4-eth3
     ip: 172.0.7.1/24
     mac: ff:00:00:00:07:01
     name: r4
-- delay: 4.62933860616ms
+    neighbor:
+      ip: 172.0.7.0/24
+      name: r2
+  node2: s8
+- delay: 2.31466930308ms
   node1:
     interface: r2-eth4
     ip: 172.0.8.0/24
     mac: ff:00:00:00:08:00
     name: r2
-  node2:
+    neighbor:
+      ip: 172.0.8.1/24
+      name: r5
+  node2: s9
+- delay: 2.31466930308ms
+  node1:
     interface: r5-eth3
     ip: 172.0.8.1/24
     mac: ff:00:00:00:08:01
     name: r5
-- delay: 0.063711078306ms
+    neighbor:
+      ip: 172.0.8.0/24
+      name: r2
+  node2: s9
+- delay: 0.031855539153ms
   node1:
     interface: r3-eth1
     ip: 172.0.9.0/24
     mac: ff:00:00:00:09:00
     name: r3
-  node2:
+    neighbor:
+      ip: 172.0.9.1/24
+      name: r4
+  node2: s10
+- delay: 0.031855539153ms
+  node1:
     interface: r4-eth4
     ip: 172.0.9.1/24
     mac: ff:00:00:00:09:01
     name: r4
-- delay: 4.27890600914ms
+    neighbor:
+      ip: 172.0.9.0/24
+      name: r3
+  node2: s10
+- delay: 2.13945300457ms
   node1:
     interface: r4-eth5
     ip: 172.0.10.0/24
     mac: ff:00:00:00:0a:00
     name: r4
-  node2:
+    neighbor:
+      ip: 172.0.10.1/24
+      name: r5
+  node2: s11
+- delay: 2.13945300457ms
+  node1:
     interface: r5-eth4
     ip: 172.0.10.1/24
     mac: ff:00:00:00:0a:01
     name: r5
+    neighbor:
+      ip: 172.0.10.0/24
+      name: r4
+  node2: s11
 - node1:
     interface: r0-eth5
     ip: 172.0.254.0/24
@@ -256,3 +355,14 @@ router:
   name: r5
 switch:
 - name: s0
+- name: s1
+- name: s2
+- name: s3
+- name: s4
+- name: s5
+- name: s6
+- name: s7
+- name: s8
+- name: s9
+- name: s10
+- name: s11

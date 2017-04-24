@@ -40,7 +40,7 @@ def mac(integer):
 
 
 """Takes a router's name and coverts it to a bgp id"""
-def bgpID(name):
+def bgpid(name):
     bgpnum = int(name[1:]) + 1
     return str(bgpnum) + "00" 
 
@@ -74,7 +74,7 @@ def setupBGPD(router, configPath, yaml):
     # the password to use for telnet authentication
     file.write("password bgpuser\n\n")
     # this routers AS number and BGP ID
-    file.write("router bgp " + bgpID(router["name"]) +"\n")
+    file.write("router bgp " + bgpid(router["name"]) +"\n")
     file.write(" bgp router-id " + router["loIP"][:-4] + "2\n")
     # neighbor information of the route server
     # file.write(" neighbor 172.0.254.254 remote-as 65000\n")
@@ -82,25 +82,19 @@ def setupBGPD(router, configPath, yaml):
     # the network this router will advertise
     file.write(" network " + router["loIP"] + "\n\n")
 
-    interfaces = []
     for i in yaml["link"]:
         node1 = i["node1"]
         node2 = i["node2"]
 
-        if (node1["name"][0] == "h"): continue
-        if (node2 == "s0"): continue
+        if (not node1["name"] == router["name"] or node2 == "s0"): continue
         
-        if (node1["name"] == router["name"]): 
-            ip = node2["ip"]
-            bgpid = bgpID(node2["name"])
-        elif (i["node2"]["name"] == router["name"]): 
-            ip = node1["ip"]
-            bgpid = bgpID(node1["name"])
-        else: continue
-        file.write(" neighbor " + ip[:-3] + " remote-as " + bgpid + " \n")
+        ip = node1["neighbor"]["ip"]
+        bgpID = bgpid(node1["neighbor"]["name"])
+      
+        file.write(" neighbor " + ip[:-3] + " remote-as " + bgpID + " \n")
         file.write(" neighbor " + ip[:-3] + " description Virtual-AS-" 
-                   + bgpid + "\n")
-        file.write(" network " + ip + "\n\n")
+                   + bgpID + "\n")
+        # file.write(" network " + ip + "\n\n")
     file.close
     setFilePerms(configPath + "bgpd.conf")
 
@@ -237,13 +231,15 @@ if __name__ == '__main__':
         })
 
     numintf = {}
-    counter = 0
+    switchCount = 1
+    subnetCount = 0
     for edge in graph.edges():
-        if (counter > 64770):
-            raise RuntimeError("Topologies with more than 64770 links are "
+        if (subnetCount > 64770):
+            raise RuntimeError("Topologies with more than 64770 subnets are "
                                + "not supported")
         router1 = "r" + str(edge[0])
         router2 = "r" + str(edge[1])
+        switch = "s" + str(switchCount)
         
         if router1 in numintf: numintf[router1] += 1 
         else: numintf[router1] = 1
@@ -251,31 +247,41 @@ if __name__ == '__main__':
         if router2 in numintf: numintf[router2] += 1 
         else: numintf[router2] = 1 
 
-        subnet = str(counter / 255) + "." + str(counter % 255) 
-        delay = getDelay(graph.node[edge[0]],graph.node[edge[1]])
+        subnet = str(subnetCount / 255) + "." + str(subnetCount % 255) 
+        delay = getDelay(graph.node[edge[0]],graph.node[edge[1]]) / 2
+        yaml["switch"].append({"name": switch})
         yaml["link"].append({
             "node1": {"name": router1,
                       "interface": router1 + "-eth" + str(numintf[router1]),
                       "ip": "172." + subnet + ".0/24", 
                       "mac": "ff:00:00:" 
-                             + mac(counter / 255) + ":" 
-                             + mac(counter % 255) + ":00"}, 
-            "node2": {"name": router2,
+                             + mac(subnetCount / 255) + ":" 
+                             + mac(subnetCount % 255) + ":00",
+                       "neighbor":{"name": router2, 
+                                   "ip": "172." + subnet + ".1/24"}},
+            "node2": switch,
+            "delay": (str(delay) + "ms")
+        })
+        yaml["link"].append({
+            "node1": {"name": router2,
                       "interface": router2 + "-eth" + str(numintf[router2]),
                       "ip": "172." + subnet + ".1/24", 
                       "mac": "ff:00:00:" 
-                             + mac(counter / 255) + ":" 
-                             + mac(counter % 255) + ":01"},
+                             + mac(subnetCount / 255) + ":" 
+                             + mac(subnetCount % 255) + ":01",
+                      "neighbor":{"name": router1, 
+                                   "ip": "172." + subnet + ".0/24"}},
+            "node2": switch,
             "delay": (str(delay) + "ms")
         })
-        counter += 1
+        switchCount += 1
+        subnetCount += 1
     # Add route server and connect it to the global switch
     # routeServer = {"name": "rs",
     #                        "ip": "172.0.254.254",
     #                        "cmd": []}
     # yaml["router"].append(routeServer)
     # yaml["link"].append({
-    #     "node1": "rs",
     #     "node1": {"name": "rs",
     #               "interface": "rs-eth0",
     #               "ip": "172.0.254.254",
