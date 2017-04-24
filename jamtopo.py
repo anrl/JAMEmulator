@@ -72,9 +72,6 @@ class JAMTopo(Topo):
                              inMountNamespace=True,
                              inPIDNamespace=True,
                              inUTSNamespace=True)
-                if ("loIP" in i):
-                    # Add a loopback interface with an IP in router's announced range
-                    self.addNodeLoopbackIntf(node=i["name"], ip=i["loIP"])
 
                 # Configure and setup the Quagga service for this node
                 quaggaSvcConfig = \
@@ -89,14 +86,11 @@ class JAMTopo(Topo):
                 loss = i["loss"] if "loss" in i else 0     
                 isDict1 = isinstance(i["node1"], dict)
                 isDict2 = isinstance(i["node2"], dict)
+
+                if isinstance(i["node1"], dict): name1 = i["node1"]["name"]
+                else: name1 = i["node1"]
+
+                if isinstance(i["node2"], dict): name2 = i["node2"]["name"]
+                else: name2 = i["node2"]
                 
-                if (isDict1 and isDict2):
-                    node1 = i["node1"]
-                    node2 = i["node2"]
-                    self.addLink(node1["name"], node2["name"],
-                                 bw=bw, delay=delay, loss=loss)      
-                elif (not isDict1 and isDict2) or (isDict1 and not isDict2):
-                    raise RuntimeError("Invalid link format")
-                else:
-                    self.addLink(i["node1"], i["node2"],
-                                 bw=bw, delay=delay, loss=loss)
+                self.addLink(name1, name2, bw=bw, delay=delay, loss=loss)

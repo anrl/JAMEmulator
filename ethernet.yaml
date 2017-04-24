@@ -18,16 +18,19 @@ cloud:
  - name: cloud1              # required - specifies the name of the host node
    cpu:  0.1                 # optional - places a restriction on the amount of cpu (%) available to host
    cmd: 'ping -c 10 8.8.8.8' # optional - specifies a command to run on the host node. Hosts can run any command available on the OS
+                             #            also accepts a list of commands if more than one is required
 fog:
  - name: fog1                # required - specifies the name of the host node
    cpu: 0.2                  # optional - places a restriction on the amount of cpu (%) available to host
    cmd: 'ping -c 10 8.8.8.8' # optional - specifies a command to run on the host node. Hosts can run any command available on the OS
+                             #            also accepts a list of commands if more than one is required
  - name: fog2
 device:
  - name: dev1                # required - specifies the name of the host node
    cpu: 0.01                 # optional - places a restriction on the amount of cpu (%) available to host
    cmd: 'ping -c 10 8.8.8.8' # optional - specifies a command to run on the host node. Hosts can run any command available on the OS
- - name: dev2
+                             #            also accepts a list of commands if more than one is required
+ - name: dev2                
  - name: dev3
 switch:
  - name: s0                  # required - specifies the name of the switch

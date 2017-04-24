@@ -19,18 +19,21 @@ def setupIntfs(net, config):
     if ("link" in config):
         for i in config["link"]:
             node1 = i["node1"]
-            node2 = i["node2"]
-            isDict1 = isinstance(node1, dict)
-            isDict2 = isinstance(node2, dict)
-            
-            if (isDict1 and isDict2):
-                n1 = net.get(node1["name"])
-                n1.setIP(node1["ip"], intf=node1["interface"])
-                n1.setMAC(node1["mac"], intf=node1["interface"])
+            node2 = i["node2"]  
 
+            if (isinstance(node1, dict)):
+                n1 = net.get(node1["name"])
+                if ("ip" in node1):
+                    n1.setIP(node1["ip"], intf=node1["interface"])
+                if ("mac" in node1):
+                    n1.setMAC(node1["mac"], intf=node1["interface"])
+            
+            if (isinstance(node2, dict)): 
                 n2 = net.get(node2["name"])
-                n2.setIP(node2["ip"], intf=node2["interface"])
-                n2.setMAC(node2["mac"], intf=node2["interface"])
+                if ("ip" in node2):
+                    n2.setIP(node2["ip"], intf=node2["interface"])
+                if ("mac" in node2):
+                    n2.setMAC(node2["mac"], intf=node2["interface"])
 
 
 def startNAT(root, inetIntf="eth0", subnet="10.0/8"):
@@ -110,6 +113,24 @@ def connectToInternet(network, switch, rootip="10.254", subnet="10.0/8"):
         host.cmd("route add default gw", rootip)
     return root
 
+def runCmds(net, config):
+    groups = ["cloud", "fog", "device", "router"]
+    for i in groups:
+        if (i in config):
+            for j in config[i]:
+                if ("cmd" in j):
+                    cmdList = j["cmd"]
+                else: continue
+                # Get the host on which to run the commmand 
+                host = net.get(j["name"])
+                # Check if the command list is not a list
+                if (not isinstance(cmdList, list)):
+                    host.cmd(cmdList)
+                # Otherwise run all the commands in the list
+                else: 
+                    for c in cmdList:
+                        host.cmd(c)
+
 if __name__ == "__main__":
     if len(argv) < 2:
         print "usage: sudo python emulator.py config"
@@ -125,7 +146,8 @@ if __name__ == "__main__":
         net.start()
         # Configure and start NAT connectivity
         # rootnode = connectToInternet(net, config["switch"][0]["name"])
-        print "*** Hosts are running and should have internet connectivity"
+        # print "*** Hosts are running and should have internet connectivity"
+        runCmds(net, config)
         print "*** Type 'exit' or control-D to shut down network"
         CLI(net)
         # Shut down NAT
