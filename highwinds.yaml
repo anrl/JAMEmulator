@@ -1,0 +1,742 @@
+device:
+- cmd:
+  - route add -net 172.0.0.0 netmask 255.255.0.0 gw 10.0.0.1 dev h0-eth0
+  - route add -net 10.0.0.0 netmask 255.255.0.0 gw 10.0.0.1 dev h0-eth0
+  name: h0
+- cmd:
+  - route add -net 172.0.0.0 netmask 255.255.0.0 gw 10.0.1.1 dev h1-eth0
+  - route add -net 10.0.0.0 netmask 255.255.0.0 gw 10.0.1.1 dev h1-eth0
+  name: h1
+- cmd:
+  - route add -net 172.0.0.0 netmask 255.255.0.0 gw 10.0.2.1 dev h2-eth0
+  - route add -net 10.0.0.0 netmask 255.255.0.0 gw 10.0.2.1 dev h2-eth0
+  name: h2
+- cmd:
+  - route add -net 172.0.0.0 netmask 255.255.0.0 gw 10.0.3.1 dev h3-eth0
+  - route add -net 10.0.0.0 netmask 255.255.0.0 gw 10.0.3.1 dev h3-eth0
+  name: h3
+- cmd:
+  - route add -net 172.0.0.0 netmask 255.255.0.0 gw 10.0.4.1 dev h4-eth0
+  - route add -net 10.0.0.0 netmask 255.255.0.0 gw 10.0.4.1 dev h4-eth0
+  name: h4
+- cmd:
+  - route add -net 172.0.0.0 netmask 255.255.0.0 gw 10.0.5.1 dev h5-eth0
+  - route add -net 10.0.0.0 netmask 255.255.0.0 gw 10.0.5.1 dev h5-eth0
+  name: h5
+- cmd:
+  - route add -net 172.0.0.0 netmask 255.255.0.0 gw 10.0.6.1 dev h6-eth0
+  - route add -net 10.0.0.0 netmask 255.255.0.0 gw 10.0.6.1 dev h6-eth0
+  name: h6
+- cmd:
+  - route add -net 172.0.0.0 netmask 255.255.0.0 gw 10.0.7.1 dev h7-eth0
+  - route add -net 10.0.0.0 netmask 255.255.0.0 gw 10.0.7.1 dev h7-eth0
+  name: h7
+- cmd:
+  - route add -net 172.0.0.0 netmask 255.255.0.0 gw 10.0.8.1 dev h8-eth0
+  - route add -net 10.0.0.0 netmask 255.255.0.0 gw 10.0.8.1 dev h8-eth0
+  name: h8
+- cmd:
+  - route add -net 172.0.0.0 netmask 255.255.0.0 gw 10.0.9.1 dev h9-eth0
+  - route add -net 10.0.0.0 netmask 255.255.0.0 gw 10.0.9.1 dev h9-eth0
+  name: h9
+- cmd:
+  - route add -net 172.0.0.0 netmask 255.255.0.0 gw 10.0.10.1 dev h10-eth0
+  - route add -net 10.0.0.0 netmask 255.255.0.0 gw 10.0.10.1 dev h10-eth0
+  name: h10
+- cmd:
+  - route add -net 172.0.0.0 netmask 255.255.0.0 gw 10.0.11.1 dev h11-eth0
+  - route add -net 10.0.0.0 netmask 255.255.0.0 gw 10.0.11.1 dev h11-eth0
+  name: h11
+- cmd:
+  - route add -net 172.0.0.0 netmask 255.255.0.0 gw 10.0.12.1 dev h12-eth0
+  - route add -net 10.0.0.0 netmask 255.255.0.0 gw 10.0.12.1 dev h12-eth0
+  name: h12
+- cmd:
+  - route add -net 172.0.0.0 netmask 255.255.0.0 gw 10.0.13.1 dev h13-eth0
+  - route add -net 10.0.0.0 netmask 255.255.0.0 gw 10.0.13.1 dev h13-eth0
+  name: h13
+- cmd:
+  - route add -net 172.0.0.0 netmask 255.255.0.0 gw 10.0.14.1 dev h14-eth0
+  - route add -net 10.0.0.0 netmask 255.255.0.0 gw 10.0.14.1 dev h14-eth0
+  name: h14
+- cmd:
+  - route add -net 172.0.0.0 netmask 255.255.0.0 gw 10.0.15.1 dev h15-eth0
+  - route add -net 10.0.0.0 netmask 255.255.0.0 gw 10.0.15.1 dev h15-eth0
+  name: h15
+- cmd:
+  - route add -net 172.0.0.0 netmask 255.255.0.0 gw 10.0.16.1 dev h16-eth0
+  - route add -net 10.0.0.0 netmask 255.255.0.0 gw 10.0.16.1 dev h16-eth0
+  name: h16
+- cmd:
+  - route add -net 172.0.0.0 netmask 255.255.0.0 gw 10.0.17.1 dev h17-eth0
+  - route add -net 10.0.0.0 netmask 255.255.0.0 gw 10.0.17.1 dev h17-eth0
+  name: h17
+link:
+- node1:
+    interface: r0-eth0
+    ip: 10.0.0.1/24
+    mac: 00:00:00:00:00:00:02
+    name: r0
+  node2:
+    interface: h0-eth0
+    ip: 10.0.0.2/24
+    mac: 00:00:00:00:00:00:01
+    name: h0
+- node1:
+    interface: r1-eth0
+    ip: 10.0.1.1/24
+    mac: 00:00:00:00:00:01:02
+    name: r1
+  node2:
+    interface: h1-eth0
+    ip: 10.0.1.2/24
+    mac: 00:00:00:00:00:01:01
+    name: h1
+- node1:
+    interface: r2-eth0
+    ip: 10.0.2.1/24
+    mac: 00:00:00:00:00:02:02
+    name: r2
+  node2:
+    interface: h2-eth0
+    ip: 10.0.2.2/24
+    mac: 00:00:00:00:00:02:01
+    name: h2
+- node1:
+    interface: r3-eth0
+    ip: 10.0.3.1/24
+    mac: 00:00:00:00:00:03:02
+    name: r3
+  node2:
+    interface: h3-eth0
+    ip: 10.0.3.2/24
+    mac: 00:00:00:00:00:03:01
+    name: h3
+- node1:
+    interface: r4-eth0
+    ip: 10.0.4.1/24
+    mac: 00:00:00:00:00:04:02
+    name: r4
+  node2:
+    interface: h4-eth0
+    ip: 10.0.4.2/24
+    mac: 00:00:00:00:00:04:01
+    name: h4
+- node1:
+    interface: r5-eth0
+    ip: 10.0.5.1/24
+    mac: 00:00:00:00:00:05:02
+    name: r5
+  node2:
+    interface: h5-eth0
+    ip: 10.0.5.2/24
+    mac: 00:00:00:00:00:05:01
+    name: h5
+- node1:
+    interface: r6-eth0
+    ip: 10.0.6.1/24
+    mac: 00:00:00:00:00:06:02
+    name: r6
+  node2:
+    interface: h6-eth0
+    ip: 10.0.6.2/24
+    mac: 00:00:00:00:00:06:01
+    name: h6
+- node1:
+    interface: r7-eth0
+    ip: 10.0.7.1/24
+    mac: 00:00:00:00:00:07:02
+    name: r7
+  node2:
+    interface: h7-eth0
+    ip: 10.0.7.2/24
+    mac: 00:00:00:00:00:07:01
+    name: h7
+- node1:
+    interface: r8-eth0
+    ip: 10.0.8.1/24
+    mac: 00:00:00:00:00:08:02
+    name: r8
+  node2:
+    interface: h8-eth0
+    ip: 10.0.8.2/24
+    mac: 00:00:00:00:00:08:01
+    name: h8
+- node1:
+    interface: r9-eth0
+    ip: 10.0.9.1/24
+    mac: 00:00:00:00:00:09:02
+    name: r9
+  node2:
+    interface: h9-eth0
+    ip: 10.0.9.2/24
+    mac: 00:00:00:00:00:09:01
+    name: h9
+- node1:
+    interface: r10-eth0
+    ip: 10.0.10.1/24
+    mac: 00:00:00:00:00:0a:02
+    name: r10
+  node2:
+    interface: h10-eth0
+    ip: 10.0.10.2/24
+    mac: 00:00:00:00:00:0a:01
+    name: h10
+- node1:
+    interface: r11-eth0
+    ip: 10.0.11.1/24
+    mac: 00:00:00:00:00:0b:02
+    name: r11
+  node2:
+    interface: h11-eth0
+    ip: 10.0.11.2/24
+    mac: 00:00:00:00:00:0b:01
+    name: h11
+- node1:
+    interface: r12-eth0
+    ip: 10.0.12.1/24
+    mac: 00:00:00:00:00:0c:02
+    name: r12
+  node2:
+    interface: h12-eth0
+    ip: 10.0.12.2/24
+    mac: 00:00:00:00:00:0c:01
+    name: h12
+- node1:
+    interface: r13-eth0
+    ip: 10.0.13.1/24
+    mac: 00:00:00:00:00:0d:02
+    name: r13
+  node2:
+    interface: h13-eth0
+    ip: 10.0.13.2/24
+    mac: 00:00:00:00:00:0d:01
+    name: h13
+- node1:
+    interface: r14-eth0
+    ip: 10.0.14.1/24
+    mac: 00:00:00:00:00:0e:02
+    name: r14
+  node2:
+    interface: h14-eth0
+    ip: 10.0.14.2/24
+    mac: 00:00:00:00:00:0e:01
+    name: h14
+- node1:
+    interface: r15-eth0
+    ip: 10.0.15.1/24
+    mac: 00:00:00:00:00:0f:02
+    name: r15
+  node2:
+    interface: h15-eth0
+    ip: 10.0.15.2/24
+    mac: 00:00:00:00:00:0f:01
+    name: h15
+- node1:
+    interface: r16-eth0
+    ip: 10.0.16.1/24
+    mac: 00:00:00:00:00:10:02
+    name: r16
+  node2:
+    interface: h16-eth0
+    ip: 10.0.16.2/24
+    mac: 00:00:00:00:00:10:01
+    name: h16
+- node1:
+    interface: r17-eth0
+    ip: 10.0.17.1/24
+    mac: 00:00:00:00:00:11:02
+    name: r17
+  node2:
+    interface: h17-eth0
+    ip: 10.0.17.2/24
+    mac: 00:00:00:00:00:11:01
+    name: h17
+- delay: 32.8736606777ms
+  node1:
+    interface: r0-eth1
+    ip: 172.0.0.1/24
+    mac: ff:00:00:00:00:01
+    name: r0
+  node2:
+    interface: r2-eth1
+    ip: 172.0.0.2/24
+    mac: ff:00:00:00:00:02
+    name: r2
+- delay: 1.75662441805ms
+  node1:
+    interface: r0-eth2
+    ip: 172.0.1.1/24
+    mac: ff:00:00:00:01:01
+    name: r0
+  node2:
+    interface: r3-eth1
+    ip: 172.0.1.2/24
+    mac: ff:00:00:00:01:02
+    name: r3
+- delay: 2.35377924985ms
+  node1:
+    interface: r1-eth1
+    ip: 172.0.2.1/24
+    mac: ff:00:00:00:02:01
+    name: r1
+  node2:
+    interface: r5-eth1
+    ip: 172.0.2.2/24
+    mac: ff:00:00:00:02:02
+    name: r5
+- delay: 1.68811254994ms
+  node1:
+    interface: r1-eth2
+    ip: 172.0.3.1/24
+    mac: ff:00:00:00:03:01
+    name: r1
+  node2:
+    interface: r6-eth1
+    ip: 172.0.3.2/24
+    mac: ff:00:00:00:03:02
+    name: r6
+- delay: 1.29796072283ms
+  node1:
+    interface: r1-eth3
+    ip: 172.0.4.1/24
+    mac: ff:00:00:00:04:01
+    name: r1
+  node2:
+    interface: r7-eth1
+    ip: 172.0.4.2/24
+    mac: ff:00:00:00:04:02
+    name: r7
+- delay: 4.76970581043ms
+  node1:
+    interface: r2-eth2
+    ip: 172.0.5.1/24
+    mac: ff:00:00:00:05:01
+    name: r2
+  node2:
+    interface: r9-eth1
+    ip: 172.0.5.2/24
+    mac: ff:00:00:00:05:02
+    name: r9
+- delay: 8.77367322608ms
+  node1:
+    interface: r2-eth3
+    ip: 172.0.6.1/24
+    mac: ff:00:00:00:06:01
+    name: r2
+  node2:
+    interface: r14-eth1
+    ip: 172.0.6.2/24
+    mac: ff:00:00:00:06:02
+    name: r14
+- delay: 30.5268502833ms
+  node1:
+    interface: r4-eth1
+    ip: 172.0.7.1/24
+    mac: ff:00:00:00:07:01
+    name: r4
+  node2:
+    interface: r17-eth1
+    ip: 172.0.7.2/24
+    mac: ff:00:00:00:07:02
+    name: r17
+- delay: 1.79011214633ms
+  node1:
+    interface: r4-eth2
+    ip: 172.0.8.1/24
+    mac: ff:00:00:00:08:01
+    name: r4
+  node2:
+    interface: r5-eth2
+    ip: 172.0.8.2/24
+    mac: ff:00:00:00:08:02
+    name: r5
+- delay: 1.75615537372ms
+  node1:
+    interface: r4-eth3
+    ip: 172.0.9.1/24
+    mac: ff:00:00:00:09:01
+    name: r4
+  node2:
+    interface: r6-eth2
+    ip: 172.0.9.2/24
+    mac: ff:00:00:00:09:02
+    name: r6
+- delay: 0.851587457195ms
+  node1:
+    interface: r4-eth4
+    ip: 172.0.10.1/24
+    mac: ff:00:00:00:0a:01
+    name: r4
+  node2:
+    interface: r7-eth2
+    ip: 172.0.10.2/24
+    mac: ff:00:00:00:0a:02
+    name: r7
+- delay: 27.3975102424ms
+  node1:
+    interface: r6-eth3
+    ip: 172.0.11.1/24
+    mac: ff:00:00:00:0b:01
+    name: r6
+  node2:
+    interface: r8-eth1
+    ip: 172.0.11.2/24
+    mac: ff:00:00:00:0b:02
+    name: r8
+- delay: 2.72853170459ms
+  node1:
+    interface: r8-eth2
+    ip: 172.0.12.1/24
+    mac: ff:00:00:00:0c:01
+    name: r8
+  node2:
+    interface: r16-eth1
+    ip: 172.0.12.2/24
+    mac: ff:00:00:00:0c:02
+    name: r16
+- delay: 1.72088795008ms
+  node1:
+    interface: r8-eth3
+    ip: 172.0.13.1/24
+    mac: ff:00:00:00:0d:01
+    name: r8
+  node2:
+    interface: r17-eth2
+    ip: 172.0.13.2/24
+    mac: ff:00:00:00:0d:02
+    name: r17
+- delay: 5.63499098748ms
+  node1:
+    interface: r8-eth4
+    ip: 172.0.14.1/24
+    mac: ff:00:00:00:0e:01
+    name: r8
+  node2:
+    interface: r15-eth1
+    ip: 172.0.14.2/24
+    mac: ff:00:00:00:0e:02
+    name: r15
+- delay: 4.18405545099ms
+  node1:
+    interface: r9-eth2
+    ip: 172.0.15.1/24
+    mac: ff:00:00:00:0f:01
+    name: r9
+  node2:
+    interface: r17-eth3
+    ip: 172.0.15.2/24
+    mac: ff:00:00:00:0f:02
+    name: r17
+- delay: 12.5683567214ms
+  node1:
+    interface: r9-eth3
+    ip: 172.0.16.1/24
+    mac: ff:00:00:00:10:01
+    name: r9
+  node2:
+    interface: r13-eth1
+    ip: 172.0.16.2/24
+    mac: ff:00:00:00:10:02
+    name: r13
+- delay: 4.62933860616ms
+  node1:
+    interface: r9-eth4
+    ip: 172.0.17.1/24
+    mac: ff:00:00:00:11:01
+    name: r9
+  node2:
+    interface: r15-eth2
+    ip: 172.0.17.2/24
+    mac: ff:00:00:00:11:02
+    name: r15
+- delay: 5.59714516463ms
+  node1:
+    interface: r10-eth1
+    ip: 172.0.18.1/24
+    mac: ff:00:00:00:12:01
+    name: r10
+  node2:
+    interface: r11-eth1
+    ip: 172.0.18.2/24
+    mac: ff:00:00:00:12:02
+    name: r11
+- delay: 13.7149722333ms
+  node1:
+    interface: r10-eth2
+    ip: 172.0.19.1/24
+    mac: ff:00:00:00:13:01
+    name: r10
+  node2:
+    interface: r15-eth3
+    ip: 172.0.19.2/24
+    mac: ff:00:00:00:13:02
+    name: r15
+- delay: 18.9147646284ms
+  node1:
+    interface: r11-eth2
+    ip: 172.0.20.1/24
+    mac: ff:00:00:00:14:01
+    name: r11
+  node2:
+    interface: r17-eth4
+    ip: 172.0.20.2/24
+    mac: ff:00:00:00:14:02
+    name: r17
+- delay: 2.41383840338ms
+  node1:
+    interface: r11-eth3
+    ip: 172.0.21.1/24
+    mac: ff:00:00:00:15:01
+    name: r11
+  node2:
+    interface: r12-eth1
+    ip: 172.0.21.2/24
+    mac: ff:00:00:00:15:02
+    name: r12
+- delay: 14.5378191326ms
+  node1:
+    interface: r11-eth4
+    ip: 172.0.22.1/24
+    mac: ff:00:00:00:16:01
+    name: r11
+  node2:
+    interface: r15-eth4
+    ip: 172.0.22.2/24
+    mac: ff:00:00:00:16:02
+    name: r15
+- delay: 2.82284854866ms
+  node1:
+    interface: r12-eth2
+    ip: 172.0.23.1/24
+    mac: ff:00:00:00:17:01
+    name: r12
+  node2:
+    interface: r13-eth2
+    ip: 172.0.23.2/24
+    mac: ff:00:00:00:17:02
+    name: r13
+- delay: 9.78707898963ms
+  node1:
+    interface: r12-eth3
+    ip: 172.0.24.1/24
+    mac: ff:00:00:00:18:01
+    name: r12
+  node2:
+    interface: r14-eth2
+    ip: 172.0.24.2/24
+    mac: ff:00:00:00:18:02
+    name: r14
+- delay: 13.7715142807ms
+  node1:
+    interface: r12-eth4
+    ip: 172.0.25.1/24
+    mac: ff:00:00:00:19:01
+    name: r12
+  node2:
+    interface: r15-eth5
+    ip: 172.0.25.2/24
+    mac: ff:00:00:00:19:02
+    name: r15
+- delay: 6.99281704448ms
+  node1:
+    interface: r13-eth3
+    ip: 172.0.26.1/24
+    mac: ff:00:00:00:1a:01
+    name: r13
+  node2:
+    interface: r14-eth3
+    ip: 172.0.26.2/24
+    mac: ff:00:00:00:1a:02
+    name: r14
+- delay: 9.18440528087ms
+  node1:
+    interface: r14-eth4
+    ip: 172.0.27.1/24
+    mac: ff:00:00:00:1b:01
+    name: r14
+  node2:
+    interface: r17-eth5
+    ip: 172.0.27.2/24
+    mac: ff:00:00:00:1b:02
+    name: r17
+- delay: 6.333621392ms
+  node1:
+    interface: r14-eth5
+    ip: 172.0.28.1/24
+    mac: ff:00:00:00:1c:01
+    name: r14
+  node2:
+    interface: r15-eth6
+    ip: 172.0.28.2/24
+    mac: ff:00:00:00:1c:02
+    name: r15
+- delay: 3.45396519327ms
+  node1:
+    interface: r15-eth7
+    ip: 172.0.29.1/24
+    mac: ff:00:00:00:1d:01
+    name: r15
+  node2:
+    interface: r16-eth2
+    ip: 172.0.29.2/24
+    mac: ff:00:00:00:1d:02
+    name: r16
+- delay: 4.49340424445ms
+  node1:
+    interface: r15-eth8
+    ip: 172.0.30.1/24
+    mac: ff:00:00:00:1e:01
+    name: r15
+  node2:
+    interface: r17-eth6
+    ip: 172.0.30.2/24
+    mac: ff:00:00:00:1e:02
+    name: r17
+- node1:
+    interface: r0-eth3
+    ip: 172.0.254.0/24
+    mac: ff:ff:00:00:00:00
+    name: r0
+  node2: s0
+- node1:
+    interface: r1-eth4
+    ip: 172.0.254.1/24
+    mac: ff:ff:00:00:00:01
+    name: r1
+  node2: s0
+- node1:
+    interface: r2-eth4
+    ip: 172.0.254.2/24
+    mac: ff:ff:00:00:00:02
+    name: r2
+  node2: s0
+- node1:
+    interface: r3-eth2
+    ip: 172.0.254.3/24
+    mac: ff:ff:00:00:00:03
+    name: r3
+  node2: s0
+- node1:
+    interface: r4-eth5
+    ip: 172.0.254.4/24
+    mac: ff:ff:00:00:00:04
+    name: r4
+  node2: s0
+- node1:
+    interface: r5-eth3
+    ip: 172.0.254.5/24
+    mac: ff:ff:00:00:00:05
+    name: r5
+  node2: s0
+- node1:
+    interface: r6-eth4
+    ip: 172.0.254.6/24
+    mac: ff:ff:00:00:00:06
+    name: r6
+  node2: s0
+- node1:
+    interface: r7-eth3
+    ip: 172.0.254.7/24
+    mac: ff:ff:00:00:00:07
+    name: r7
+  node2: s0
+- node1:
+    interface: r8-eth5
+    ip: 172.0.254.8/24
+    mac: ff:ff:00:00:00:08
+    name: r8
+  node2: s0
+- node1:
+    interface: r9-eth5
+    ip: 172.0.254.9/24
+    mac: ff:ff:00:00:00:09
+    name: r9
+  node2: s0
+- node1:
+    interface: r10-eth3
+    ip: 172.0.254.10/24
+    mac: ff:ff:00:00:00:0a
+    name: r10
+  node2: s0
+- node1:
+    interface: r11-eth5
+    ip: 172.0.254.11/24
+    mac: ff:ff:00:00:00:0b
+    name: r11
+  node2: s0
+- node1:
+    interface: r12-eth5
+    ip: 172.0.254.12/24
+    mac: ff:ff:00:00:00:0c
+    name: r12
+  node2: s0
+- node1:
+    interface: r13-eth4
+    ip: 172.0.254.13/24
+    mac: ff:ff:00:00:00:0d
+    name: r13
+  node2: s0
+- node1:
+    interface: r14-eth6
+    ip: 172.0.254.14/24
+    mac: ff:ff:00:00:00:0e
+    name: r14
+  node2: s0
+- node1:
+    interface: r15-eth9
+    ip: 172.0.254.15/24
+    mac: ff:ff:00:00:00:0f
+    name: r15
+  node2: s0
+- node1:
+    interface: r16-eth3
+    ip: 172.0.254.16/24
+    mac: ff:ff:00:00:00:10
+    name: r16
+  node2: s0
+- node1:
+    interface: r17-eth7
+    ip: 172.0.254.17/24
+    mac: ff:ff:00:00:00:11
+    name: r17
+  node2: s0
+router:
+- loIP: 10.0.0.0/24
+  name: r0
+- loIP: 10.0.1.0/24
+  name: r1
+- loIP: 10.0.2.0/24
+  name: r2
+- loIP: 10.0.3.0/24
+  name: r3
+- loIP: 10.0.4.0/24
+  name: r4
+- loIP: 10.0.5.0/24
+  name: r5
+- loIP: 10.0.6.0/24
+  name: r6
+- loIP: 10.0.7.0/24
+  name: r7
+- loIP: 10.0.8.0/24
+  name: r8
+- loIP: 10.0.9.0/24
+  name: r9
+- loIP: 10.0.10.0/24
+  name: r10
+- loIP: 10.0.11.0/24
+  name: r11
+- loIP: 10.0.12.0/24
+  name: r12
+- loIP: 10.0.13.0/24
+  name: r13
+- loIP: 10.0.14.0/24
+  name: r14
+- loIP: 10.0.15.0/24
+  name: r15
+- loIP: 10.0.16.0/24
+  name: r16
+- loIP: 10.0.17.0/24
+  name: r17
+switch:
+- name: s0
