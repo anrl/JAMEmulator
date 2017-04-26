@@ -15,9 +15,10 @@ def setFilePerms(path):
     gid = grp.getgrnam("quagga").gr_gid
     os.chown(path, uid, gid)
 
+
+""" Calculate the propagation delay(ms) between nodes 
+    based on their geographical location """
 def getDelay(node1, node2): 
-    """Calculate the propagation delay(ms) between nodes 
-       based on their geographical location"""
     if (not "Latitude" in node1 or not "Longitude" in node1): return 0
     if (not "Latitude" in node2 or not "Longitude" in node2): return 0
     loc1 = (node1["Latitude"], node1["Longitude"])
@@ -26,6 +27,7 @@ def getDelay(node1, node2):
     return float(distance) / (0.68 * 299.792458)
 
 
+"""Takes an integer and encodes it as a MAC substring"""
 def mac(integer):
     if (isinstance(integer, basestring)):
         integer = int(integer)
@@ -40,7 +42,7 @@ def mac(integer):
 
 
 """Takes a router's name and coverts it to a bgp id"""
-def bgpID(name):
+def bgpid(name):
     bgpnum = int(name[1:]) + 1
     return str(bgpnum) + "00" 
 
@@ -74,11 +76,8 @@ def setupBGPD(router, configPath, yaml):
     # the password to use for telnet authentication
     file.write("password bgpuser\n\n")
     # this routers AS number and BGP ID
-    file.write("router bgp " + bgpID(router["name"]) +"\n")
+    file.write("router bgp " + bgpid(router["name"]) +"\n")
     file.write(" bgp router-id " + router["loIP"][:-4] + "2\n")
-    # neighbor information of the route server
-    # file.write(" neighbor 172.0.254.254 remote-as 65000\n")
-    # file.write(" neighbor 172.0.254.254 description Route-Server\n\n")
     # the network this router will advertise
     file.write(" network " + router["loIP"] + "\n\n")
 
@@ -87,69 +86,21 @@ def setupBGPD(router, configPath, yaml):
         node1 = i["node1"]
         node2 = i["node2"]
 
-        if (node1["name"][0] == "h"): continue
-        if (node2 == "s0"): continue
-        
+        if (node2 == "s0" or node2["name"][0] == "h"): continue    
         if (node1["name"] == router["name"]): 
             ip = node2["ip"]
-            bgpid = bgpID(node2["name"])
+            bgpID = bgpid(node2["name"])
         elif (i["node2"]["name"] == router["name"]): 
             ip = node1["ip"]
-            bgpid = bgpID(node1["name"])
+            bgpID = bgpid(node1["name"])
         else: continue
-        file.write(" neighbor " + ip[:-3] + " remote-as " + bgpid + " \n")
+        file.write(" neighbor " + ip[:-3] + " remote-as " + bgpID + " \n")
         file.write(" neighbor " + ip[:-3] + " description Virtual-AS-" 
-                   + bgpid + "\n")
+                   + bgpID + "\n")
         file.write(" network " + ip + "\n\n")
     file.close
     setFilePerms(configPath + "bgpd.conf")
 
-"""Setup the configuration files for the route server used
-   by the BGPD protocol"""
-def setupRouteServer(configPath, yaml):
-    os.makedirs(configPath) 
-
-    # This file tells the quagga package which daemons to start.
-    file = open(configPath + "daemons", "w")
-    file.write("zebra=no\n")
-    file.write("bgpd=yes\n")
-    file.write("ospfd=no\n")
-    file.write("ospf6d=no\n")
-    file.write("ripd=no\n")
-    file.write("ripngd=no\n")
-    file.write("isisd=no\n")
-    file.close
-    setFilePerms(configPath + "daemons")
-
-    # Create configuration file for bgpd
-    file = open(configPath + "bgpd.conf", "w")
-    file.write("router bgp 65000\n")
-    file.write(" bgp router-id 172.0.254.254\n\n")
-
-    for link in yaml["link"]:
-        if (link["node2"] == "s0" and not link["node1"]["name"] == "rs"):
-            node1 = link["node1"]
-            file.write(" neighbor " + node1["ip"][:-3] + " remote-as " 
-                       + bgpID(node1["name"]) + "\n")
-            file.write(" neighbor " + node1["ip"][:-3] 
-                       + " route-server-client\n\n")
-
-    file.close
-    setFilePerms(configPath + "bgpd.conf")
-
-    # Create configuration files for vtysh
-    file = open(configPath + "debian.conf", "w")
-    file.write("vtysh_enable=yes\n")
-    file.write('zebra_options=" --daemon -A 127.0.0.1"\n')
-    file.write('bgpd_options=" --daemon -A 127.0.0.1"\n')
-    file.close
-    setFilePerms(configPath + "debian.conf")
-
-    file = open(configPath + "vtysh.conf", "w")
-    file.write("hostname rs \n")
-    file.write("username root nopassword")
-    file.close
-    setFilePerms(configPath + "vtysh.conf")
 
 def createQuaggaConfigs(yaml):
     # Directory where this file / script is located
@@ -183,8 +134,6 @@ def createQuaggaConfigs(yaml):
         setupZebra(configPath)
         setupBGPD(router, configPath, yaml)
         setupVtysh(router, configPath)
-    
-    # setupRouteServer(selfPath + "/configs/rs/", yaml)
 
 
 if __name__ == '__main__':    
@@ -203,8 +152,8 @@ if __name__ == '__main__':
     yaml["switch"].append({"name":"s0"})
 
     for node in graph.nodes():
-        if (node > 253):
-            raise RuntimeError("Topologies with more than 254" 
+        if (node > 254):
+            raise RuntimeError("Topologies with more than 255" 
                                + "nodes are not supported")
         host = "h" + str(node)
         router = "r" + str(node)
@@ -213,27 +162,26 @@ if __name__ == '__main__':
                                "cmd": [
                                     "route add -net 172.0.0.0 " 
                                     + "netmask 255.255.0.0 "
-                                    + "gw 10.0." + subnet  + ".2 "
+                                    + "gw 10.0." + subnet  + ".1 "
                                     + "dev " + host + "-eth0",
 
                                     "route add -net 10.0.0.0 "
                                     + "netmask 255.255.0.0 "
-                                    + "gw 10.0." + subnet  + ".2 "
+                                    + "gw 10.0." + subnet  + ".1 "
                                     + "dev " + host + "-eth0"
                                ]})
         yaml["router"].append({"name": router,  
                                "loIP": "10.0." + subnet + ".0/24"})
-
         # Add a link to connect host to router
         yaml["link"].append({
-            "node1": {"name": host,
-                      "interface": host + "-eth0", 
-                      "ip": "10.0." + subnet + ".1/24", 
-                      "mac": "00:00:00:00:00:" + mac(node) + ":01"}, 
-            "node2": {"name": router,
+            "node1": {"name": router,
                       "interface": router + "-eth0",
-                      "ip": "10.0." + subnet + ".2/24",
-                      "mac": "00:00:00:00:00:" + mac(node) + ":02"}
+                      "ip": "10.0." + subnet + ".1/24",
+                      "mac": "00:00:00:00:00:" + mac(node) + ":02"},
+            "node2": {"name": host,
+                      "interface": host + "-eth0", 
+                      "ip": "10.0." + subnet + ".2/24", 
+                      "mac": "00:00:00:00:00:" + mac(node) + ":01"} 
         })
 
     numintf = {}
@@ -256,32 +204,19 @@ if __name__ == '__main__':
         yaml["link"].append({
             "node1": {"name": router1,
                       "interface": router1 + "-eth" + str(numintf[router1]),
-                      "ip": "172." + subnet + ".0/24", 
-                      "mac": "ff:00:00:" 
-                             + mac(counter / 255) + ":" 
-                             + mac(counter % 255) + ":00"}, 
-            "node2": {"name": router2,
-                      "interface": router2 + "-eth" + str(numintf[router2]),
                       "ip": "172." + subnet + ".1/24", 
                       "mac": "ff:00:00:" 
                              + mac(counter / 255) + ":" 
-                             + mac(counter % 255) + ":01"},
+                             + mac(counter % 255) + ":01"}, 
+            "node2": {"name": router2,
+                      "interface": router2 + "-eth" + str(numintf[router2]),
+                      "ip": "172." + subnet + ".2/24", 
+                      "mac": "ff:00:00:" 
+                             + mac(counter / 255) + ":" 
+                             + mac(counter % 255) + ":02"},
             "delay": (str(delay) + "ms")
         })
         counter += 1
-    # Add route server and connect it to the global switch
-    # routeServer = {"name": "rs",
-    #                        "ip": "172.0.254.254",
-    #                        "cmd": []}
-    # yaml["router"].append(routeServer)
-    # yaml["link"].append({
-    #     "node1": "rs",
-    #     "node1": {"name": "rs",
-    #               "interface": "rs-eth0",
-    #               "ip": "172.0.254.254",
-    #               "mac": "ff:ff:00:00:00:ff"},
-    #     "node2": "s0"
-    # })
     # Connect all other routers to the global switch
     for router in yaml["router"]:
         if (router["name"] == "rs"): continue
@@ -293,10 +228,6 @@ if __name__ == '__main__':
                       "mac": "ff:ff:00:00:00:" + mac(name[1:])}, 
             "node2": "s0"
         })
-        # Add local network gateway to the route server's route table
-        # routeServer["cmd"].append("route add -net 10.0." + name[1:] + ".0 "
-        #                           + "netmask 255.255.255.0 "
-        #                           + "gw 172.0.254." + name[1:] + " dev rs-eth0")
 
     createQuaggaConfigs(yaml)
     dump(yaml, open(fileOut, "w"), default_flow_style=False)
