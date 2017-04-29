@@ -1,258 +1,406 @@
 device:
 - cmd:
-  - route add -net 172.0.0.0 netmask 255.255.0.0 gw 10.0.0.1 dev h0-eth0
-  - route add -net 10.0.0.0 netmask 255.255.0.0 gw 10.0.0.1 dev h0-eth0
-  name: h0
+  - route add -net 172.0.0.0 netmask 255.255.0.0 gw 10.0.0.1 dev h0-r0-eth0
+  - route add -net 10.0.0.0 netmask 255.255.0.0 gw 10.0.0.1 dev h0-r0-eth0
+  name: h0-r0
 - cmd:
-  - route add -net 172.0.0.0 netmask 255.255.0.0 gw 10.0.1.1 dev h1-eth0
-  - route add -net 10.0.0.0 netmask 255.255.0.0 gw 10.0.1.1 dev h1-eth0
-  name: h1
+  - route add -net 172.0.0.0 netmask 255.255.0.0 gw 10.0.0.1 dev h1-r0-eth0
+  - route add -net 10.0.0.0 netmask 255.255.0.0 gw 10.0.0.1 dev h1-r0-eth0
+  name: h1-r0
 - cmd:
-  - route add -net 172.0.0.0 netmask 255.255.0.0 gw 10.0.2.1 dev h2-eth0
-  - route add -net 10.0.0.0 netmask 255.255.0.0 gw 10.0.2.1 dev h2-eth0
-  name: h2
+  - route add -net 172.0.0.0 netmask 255.255.0.0 gw 10.0.1.2 dev h0-r1-eth0
+  - route add -net 10.0.0.0 netmask 255.255.0.0 gw 10.0.1.2 dev h0-r1-eth0
+  name: h0-r1
 - cmd:
-  - route add -net 172.0.0.0 netmask 255.255.0.0 gw 10.0.3.1 dev h3-eth0
-  - route add -net 10.0.0.0 netmask 255.255.0.0 gw 10.0.3.1 dev h3-eth0
-  name: h3
+  - route add -net 172.0.0.0 netmask 255.255.0.0 gw 10.0.2.2 dev h0-r2-eth0
+  - route add -net 10.0.0.0 netmask 255.255.0.0 gw 10.0.2.2 dev h0-r2-eth0
+  name: h0-r2
 - cmd:
-  - route add -net 172.0.0.0 netmask 255.255.0.0 gw 10.0.4.1 dev h4-eth0
-  - route add -net 10.0.0.0 netmask 255.255.0.0 gw 10.0.4.1 dev h4-eth0
-  name: h4
+  - route add -net 172.0.0.0 netmask 255.255.0.0 gw 10.0.2.2 dev h1-r2-eth0
+  - route add -net 10.0.0.0 netmask 255.255.0.0 gw 10.0.2.2 dev h1-r2-eth0
+  name: h1-r2
 - cmd:
-  - route add -net 172.0.0.0 netmask 255.255.0.0 gw 10.0.5.1 dev h5-eth0
-  - route add -net 10.0.0.0 netmask 255.255.0.0 gw 10.0.5.1 dev h5-eth0
-  name: h5
+  - route add -net 172.0.0.0 netmask 255.255.0.0 gw 10.0.2.2 dev h2-r2-eth0
+  - route add -net 10.0.0.0 netmask 255.255.0.0 gw 10.0.2.2 dev h2-r2-eth0
+  name: h2-r2
+- cmd:
+  - route add -net 172.0.0.0 netmask 255.255.0.0 gw 10.0.2.2 dev h3-r2-eth0
+  - route add -net 10.0.0.0 netmask 255.255.0.0 gw 10.0.2.2 dev h3-r2-eth0
+  name: h3-r2
+- cmd:
+  - route add -net 172.0.0.0 netmask 255.255.0.0 gw 10.0.3.5 dev h0-r3-eth0
+  - route add -net 10.0.0.0 netmask 255.255.0.0 gw 10.0.3.5 dev h0-r3-eth0
+  name: h0-r3
+- cmd:
+  - route add -net 172.0.0.0 netmask 255.255.0.0 gw 10.0.3.5 dev h1-r3-eth0
+  - route add -net 10.0.0.0 netmask 255.255.0.0 gw 10.0.3.5 dev h1-r3-eth0
+  name: h1-r3
+- cmd:
+  - route add -net 172.0.0.0 netmask 255.255.0.0 gw 10.0.3.5 dev h2-r3-eth0
+  - route add -net 10.0.0.0 netmask 255.255.0.0 gw 10.0.3.5 dev h2-r3-eth0
+  name: h2-r3
+- cmd:
+  - route add -net 172.0.0.0 netmask 255.255.0.0 gw 10.0.3.5 dev h3-r3-eth0
+  - route add -net 10.0.0.0 netmask 255.255.0.0 gw 10.0.3.5 dev h3-r3-eth0
+  name: h3-r3
+- cmd:
+  - route add -net 172.0.0.0 netmask 255.255.0.0 gw 10.0.4.8 dev h0-r4-eth0
+  - route add -net 10.0.0.0 netmask 255.255.0.0 gw 10.0.4.8 dev h0-r4-eth0
+  name: h0-r4
+- cmd:
+  - route add -net 172.0.0.0 netmask 255.255.0.0 gw 10.0.4.8 dev h1-r4-eth0
+  - route add -net 10.0.0.0 netmask 255.255.0.0 gw 10.0.4.8 dev h1-r4-eth0
+  name: h1-r4
+- cmd:
+  - route add -net 172.0.0.0 netmask 255.255.0.0 gw 10.0.4.8 dev h2-r4-eth0
+  - route add -net 10.0.0.0 netmask 255.255.0.0 gw 10.0.4.8 dev h2-r4-eth0
+  name: h2-r4
+- cmd:
+  - route add -net 172.0.0.0 netmask 255.255.0.0 gw 10.0.4.8 dev h3-r4-eth0
+  - route add -net 10.0.0.0 netmask 255.255.0.0 gw 10.0.4.8 dev h3-r4-eth0
+  name: h3-r4
+- cmd:
+  - route add -net 172.0.0.0 netmask 255.255.0.0 gw 10.0.4.8 dev h4-r4-eth0
+  - route add -net 10.0.0.0 netmask 255.255.0.0 gw 10.0.4.8 dev h4-r4-eth0
+  name: h4-r4
+- cmd:
+  - route add -net 172.0.0.0 netmask 255.255.0.0 gw 10.0.4.8 dev h5-r4-eth0
+  - route add -net 10.0.0.0 netmask 255.255.0.0 gw 10.0.4.8 dev h5-r4-eth0
+  name: h5-r4
+- cmd:
+  - route add -net 172.0.0.0 netmask 255.255.0.0 gw 10.0.5.13 dev h0-r5-eth0
+  - route add -net 10.0.0.0 netmask 255.255.0.0 gw 10.0.5.13 dev h0-r5-eth0
+  name: h0-r5
+- cmd:
+  - route add -net 172.0.0.0 netmask 255.255.0.0 gw 10.0.5.13 dev h1-r5-eth0
+  - route add -net 10.0.0.0 netmask 255.255.0.0 gw 10.0.5.13 dev h1-r5-eth0
+  name: h1-r5
 link:
 - node1:
     interface: r0-eth0
     ip: 10.0.0.1/24
-    mac: 00:00:00:00:00:00:01
+    mac: ff:ff:00:00:00:01
     name: r0
-  node2:
-    interface: h0-eth0
+  node2: s0-r0
+- node1:
+    interface: h0-r0-eth0
     ip: 10.0.0.2/24
-    mac: 00:00:00:00:00:00:02
-    name: h0
+    mac: ff:ff:00:00:00:02
+    name: h0-r0
+  node2: s0-r0
+- node1:
+    interface: h1-r0-eth0
+    ip: 10.0.0.3/24
+    mac: ff:ff:00:00:00:03
+    name: h1-r0
+  node2: s0-r0
 - node1:
     interface: r1-eth0
-    ip: 10.0.1.1/24
-    mac: 00:00:00:00:00:01:01
-    name: r1
-  node2:
-    interface: h1-eth0
     ip: 10.0.1.2/24
-    mac: 00:00:00:00:00:01:02
-    name: h1
+    mac: ff:ff:00:00:00:04
+    name: r1
+  node2: s0-r1
+- node1:
+    interface: h0-r1-eth0
+    ip: 10.0.1.3/24
+    mac: ff:ff:00:00:00:05
+    name: h0-r1
+  node2: s0-r1
 - node1:
     interface: r2-eth0
-    ip: 10.0.2.1/24
-    mac: 00:00:00:00:00:02:01
-    name: r2
-  node2:
-    interface: h2-eth0
     ip: 10.0.2.2/24
-    mac: 00:00:00:00:00:02:02
-    name: h2
+    mac: ff:ff:00:00:00:06
+    name: r2
+  node2: s0-r2
+- node1:
+    interface: h0-r2-eth0
+    ip: 10.0.2.3/24
+    mac: ff:ff:00:00:00:07
+    name: h0-r2
+  node2: s0-r2
+- node1:
+    interface: h1-r2-eth0
+    ip: 10.0.2.4/24
+    mac: ff:ff:00:00:00:08
+    name: h1-r2
+  node2: s0-r2
+- node1:
+    interface: h2-r2-eth0
+    ip: 10.0.2.5/24
+    mac: ff:ff:00:00:00:09
+    name: h2-r2
+  node2: s0-r2
+- node1:
+    interface: h3-r2-eth0
+    ip: 10.0.2.6/24
+    mac: ff:ff:00:00:00:0a
+    name: h3-r2
+  node2: s0-r2
 - node1:
     interface: r3-eth0
-    ip: 10.0.3.1/24
-    mac: 00:00:00:00:00:03:01
+    ip: 10.0.3.5/24
+    mac: ff:ff:00:00:00:0b
     name: r3
-  node2:
-    interface: h3-eth0
-    ip: 10.0.3.2/24
-    mac: 00:00:00:00:00:03:02
-    name: h3
+  node2: s0-r3
+- node1:
+    interface: h0-r3-eth0
+    ip: 10.0.3.6/24
+    mac: ff:ff:00:00:00:0c
+    name: h0-r3
+  node2: s0-r3
+- node1:
+    interface: h1-r3-eth0
+    ip: 10.0.3.7/24
+    mac: ff:ff:00:00:00:0d
+    name: h1-r3
+  node2: s0-r3
+- node1:
+    interface: h2-r3-eth0
+    ip: 10.0.3.8/24
+    mac: ff:ff:00:00:00:0e
+    name: h2-r3
+  node2: s0-r3
+- node1:
+    interface: h3-r3-eth0
+    ip: 10.0.3.9/24
+    mac: ff:ff:00:00:00:0f
+    name: h3-r3
+  node2: s0-r3
 - node1:
     interface: r4-eth0
-    ip: 10.0.4.1/24
-    mac: 00:00:00:00:00:04:01
+    ip: 10.0.4.8/24
+    mac: ff:ff:00:00:00:10
     name: r4
-  node2:
-    interface: h4-eth0
-    ip: 10.0.4.2/24
-    mac: 00:00:00:00:00:04:02
-    name: h4
+  node2: s0-r4
+- node1:
+    interface: h0-r4-eth0
+    ip: 10.0.4.9/24
+    mac: ff:ff:00:00:00:11
+    name: h0-r4
+  node2: s0-r4
+- node1:
+    interface: h1-r4-eth0
+    ip: 10.0.4.10/24
+    mac: ff:ff:00:00:00:12
+    name: h1-r4
+  node2: s0-r4
+- node1:
+    interface: h2-r4-eth0
+    ip: 10.0.4.11/24
+    mac: ff:ff:00:00:00:13
+    name: h2-r4
+  node2: s0-r4
+- node1:
+    interface: h3-r4-eth0
+    ip: 10.0.4.12/24
+    mac: ff:ff:00:00:00:14
+    name: h3-r4
+  node2: s0-r4
+- node1:
+    interface: h4-r4-eth0
+    ip: 10.0.4.13/24
+    mac: ff:ff:00:00:00:15
+    name: h4-r4
+  node2: s0-r4
+- node1:
+    interface: h5-r4-eth0
+    ip: 10.0.4.14/24
+    mac: ff:ff:00:00:00:16
+    name: h5-r4
+  node2: s0-r4
 - node1:
     interface: r5-eth0
-    ip: 10.0.5.1/24
-    mac: 00:00:00:00:00:05:01
+    ip: 10.0.5.13/24
+    mac: ff:ff:00:00:00:17
     name: r5
-  node2:
-    interface: h5-eth0
-    ip: 10.0.5.2/24
-    mac: 00:00:00:00:00:05:02
-    name: h5
-- delay: 1.37115610741ms
+  node2: s0-r5
+- node1:
+    interface: h0-r5-eth0
+    ip: 10.0.5.14/24
+    mac: ff:ff:00:00:00:18
+    name: h0-r5
+  node2: s0-r5
+- node1:
+    interface: h1-r5-eth0
+    ip: 10.0.5.15/24
+    mac: ff:ff:00:00:00:19
+    name: h1-r5
+  node2: s0-r5
+- delay: 2.74231221482ms
   node1:
     interface: r0-eth1
     ip: 172.0.0.1/24
-    mac: ff:00:00:00:00:01
+    mac: ff:ff:00:00:00:1a
     name: r0
   node2:
     interface: r1-eth1
     ip: 172.0.0.2/24
-    mac: ff:00:00:00:00:02
+    mac: ff:ff:00:00:00:1b
     name: r1
-- delay: 7.33488771619ms
+- delay: 14.6697754324ms
   node1:
     interface: r0-eth2
     ip: 172.0.1.1/24
-    mac: ff:00:00:00:01:01
+    mac: ff:ff:00:00:00:1c
     name: r0
   node2:
     interface: r2-eth1
     ip: 172.0.1.2/24
-    mac: ff:00:00:00:01:02
+    mac: ff:ff:00:00:00:1d
     name: r2
-- delay: 9.63489604513ms
+- delay: 19.2697920903ms
   node1:
     interface: r0-eth3
     ip: 172.0.2.1/24
-    mac: ff:00:00:00:02:01
+    mac: ff:ff:00:00:00:1e
     name: r0
   node2:
     interface: r4-eth1
     ip: 172.0.2.2/24
-    mac: ff:00:00:00:02:02
+    mac: ff:ff:00:00:00:1f
     name: r4
-- delay: 8.4480571557ms
+- delay: 16.8961143114ms
   node1:
     interface: r0-eth4
     ip: 172.0.3.1/24
-    mac: ff:00:00:00:03:01
+    mac: ff:ff:00:00:00:20
     name: r0
   node2:
     interface: r5-eth1
     ip: 172.0.3.2/24
-    mac: ff:00:00:00:03:02
+    mac: ff:ff:00:00:00:21
     name: r5
-- delay: 6.88575714033ms
+- delay: 13.7715142807ms
   node1:
     interface: r1-eth2
     ip: 172.0.4.1/24
-    mac: ff:00:00:00:04:01
+    mac: ff:ff:00:00:00:22
     name: r1
   node2:
     interface: r2-eth2
     ip: 172.0.4.2/24
-    mac: ff:00:00:00:04:02
+    mac: ff:ff:00:00:00:23
     name: r2
-- delay: 9.07569234842ms
+- delay: 18.1513846968ms
   node1:
     interface: r1-eth3
     ip: 172.0.5.1/24
-    mac: ff:00:00:00:05:01
+    mac: ff:ff:00:00:00:24
     name: r1
   node2:
     interface: r4-eth2
     ip: 172.0.5.2/24
-    mac: ff:00:00:00:05:02
+    mac: ff:ff:00:00:00:25
     name: r4
-- delay: 7.64514458997ms
+- delay: 15.2902891799ms
   node1:
     interface: r1-eth4
     ip: 172.0.6.1/24
-    mac: ff:00:00:00:06:01
+    mac: ff:ff:00:00:00:26
     name: r1
   node2:
     interface: r5-eth2
     ip: 172.0.6.2/24
-    mac: ff:00:00:00:06:02
+    mac: ff:ff:00:00:00:27
     name: r5
-- delay: 2.35077694602ms
+- delay: 4.70155389204ms
   node1:
     interface: r2-eth3
     ip: 172.0.7.1/24
-    mac: ff:00:00:00:07:01
+    mac: ff:ff:00:00:00:28
     name: r2
   node2:
     interface: r4-eth3
     ip: 172.0.7.2/24
-    mac: ff:00:00:00:07:02
+    mac: ff:ff:00:00:00:29
     name: r4
-- delay: 2.31466930308ms
+- delay: 4.62933860616ms
   node1:
     interface: r2-eth4
     ip: 172.0.8.1/24
-    mac: ff:00:00:00:08:01
+    mac: ff:ff:00:00:00:2a
     name: r2
   node2:
     interface: r5-eth3
     ip: 172.0.8.2/24
-    mac: ff:00:00:00:08:02
+    mac: ff:ff:00:00:00:2b
     name: r5
-- delay: 0.031855539153ms
+- delay: 0.063711078306ms
   node1:
     interface: r3-eth1
     ip: 172.0.9.1/24
-    mac: ff:00:00:00:09:01
+    mac: ff:ff:00:00:00:2c
     name: r3
   node2:
     interface: r4-eth4
     ip: 172.0.9.2/24
-    mac: ff:00:00:00:09:02
+    mac: ff:ff:00:00:00:2d
     name: r4
-- delay: 2.13945300457ms
+- delay: 4.27890600914ms
   node1:
     interface: r4-eth5
     ip: 172.0.10.1/24
-    mac: ff:00:00:00:0a:01
+    mac: ff:ff:00:00:00:2e
     name: r4
   node2:
     interface: r5-eth4
     ip: 172.0.10.2/24
-    mac: ff:00:00:00:0a:02
+    mac: ff:ff:00:00:00:2f
     name: r5
 - node1:
     interface: r0-eth5
-    ip: 172.0.254.0/24
-    mac: ff:ff:00:00:00:00
+    ip: 172.0.254.1/24
+    mac: ff:ff:00:00:00:30
     name: r0
   node2: s0
 - node1:
     interface: r1-eth5
-    ip: 172.0.254.1/24
-    mac: ff:ff:00:00:00:01
+    ip: 172.0.254.2/24
+    mac: ff:ff:00:00:00:31
     name: r1
   node2: s0
 - node1:
     interface: r2-eth5
-    ip: 172.0.254.2/24
-    mac: ff:ff:00:00:00:02
+    ip: 172.0.254.3/24
+    mac: ff:ff:00:00:00:32
     name: r2
   node2: s0
 - node1:
     interface: r3-eth2
-    ip: 172.0.254.3/24
-    mac: ff:ff:00:00:00:03
+    ip: 172.0.254.4/24
+    mac: ff:ff:00:00:00:33
     name: r3
   node2: s0
 - node1:
     interface: r4-eth6
-    ip: 172.0.254.4/24
-    mac: ff:ff:00:00:00:04
+    ip: 172.0.254.5/24
+    mac: ff:ff:00:00:00:34
     name: r4
   node2: s0
 - node1:
     interface: r5-eth5
-    ip: 172.0.254.5/24
-    mac: ff:ff:00:00:00:05
+    ip: 172.0.254.6/24
+    mac: ff:ff:00:00:00:35
     name: r5
   node2: s0
 router:
 - loIP: 10.0.0.0/24
   name: r0
-- loIP: 10.0.1.0/24
+- loIP: 10.0.1.1/24
   name: r1
-- loIP: 10.0.2.0/24
+- loIP: 10.0.2.1/24
   name: r2
-- loIP: 10.0.3.0/24
+- loIP: 10.0.3.4/24
   name: r3
-- loIP: 10.0.4.0/24
+- loIP: 10.0.4.7/24
   name: r4
-- loIP: 10.0.5.0/24
+- loIP: 10.0.5.12/24
   name: r5
 switch:
 - name: s0
+- name: s0-r0
+- name: s0-r1
+- name: s0-r2
+- name: s0-r3
+- name: s0-r4
+- name: s0-r5

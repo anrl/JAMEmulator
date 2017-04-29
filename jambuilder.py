@@ -5,15 +5,42 @@ import grp
 import inspect
 import shutil
 import networkx as nx
+import numpy as np
 
 from sys import argv, exit
 from yaml import dump
 from geopy.distance import vincenty
 
+from macfactory import MACFactory
+from ipv4factory import IPV4Factory
+
+
+def printUsage():
+    print "usage: sudo python " + argv[0] + " input output [options]"
+    print "    -hosts n:    the number of hosts on each local network"
+    print "    -hosts m,s:  the number of host on each local will be normally"
+    print "                 distributed with mean m and standard deviation s" 
+
+
 def setFilePerms(path):
     uid = pwd.getpwnam("quagga").pw_uid
     gid = grp.getgrnam("quagga").gr_gid
     os.chown(path, uid, gid)
+
+def numHostGen(args):
+    params = args.split(",")
+
+    if (len(params) == 1):
+        def uniform(): 
+            return int(args[0])
+        return uniform
+    else:
+        def normal():
+            mu, sigma = params
+            sample = np.random.normal(float(mu), float(sigma), 1)[0]
+            if (sample < 0): return 0
+            else: return int(round(sample))
+        return normal
 
 
 """ Calculate the propagation delay(ms) between nodes 
@@ -27,21 +54,7 @@ def getDelay(node1, node2):
     return float(distance) / (0.68 * 299.792458)
 
 
-"""Takes an integer and encodes it as a MAC substring"""
-def mac(integer):
-    if (isinstance(integer, basestring)):
-        integer = int(integer)
-    if (integer > 255):
-        raise ValueError("Cannot encode values larger than 255")
-    encoding = str(hex(integer))
-    
-    if (integer < 16):
-        return "0" + encoding[2:]
-    else:
-        return encoding[2:]
-
-
-"""Takes a router's name and coverts it to a bgp id"""
+""" Takes a router's name and coverts it to a bgp id """
 def bgpid(name):
     bgpnum = int(name[1:]) + 1
     return str(bgpnum) + "00" 
@@ -84,8 +97,9 @@ def setupBGPD(router, configPath, yaml):
     for i in yaml["link"]:
         node1 = i["node1"]
         node2 = i["node2"]
-
-        if (node2 == "s0" or node2["name"][0] == "h"): continue    
+        # If the link is local then skip it
+        if (not "name" in node2 and node2[0] == "s"): 
+            continue
         if (node1["name"] == router["name"]): 
             ip = node2["ip"]
             bgpID = bgpid(node2["name"])
@@ -110,11 +124,9 @@ def createQuaggaConfigs(yaml):
     shutil.rmtree(selfPath + "/configs/")
     
     for router in yaml["router"]:
-        # Setup route server separately
-        if (router["name"] == "rs"): continue
         # Path configurations for mounts
         configPath = selfPath + "/configs/" + router["name"] + "/"
-        os.makedirs(configPath)   
+        os.makedirs(configPath)
 
         # This file tells the quagga package which daemons to start.
         file = open(configPath + "daemons", "w")
@@ -138,9 +150,15 @@ def createQuaggaConfigs(yaml):
 
 if __name__ == '__main__':    
     if len(argv) < 3: 
-        print "usage: sudo python jambuilder.py input output"
+        printUsage()
         exit()
-    script, fileIn, fileOut = argv 
+    
+    if (len(argv) == 5 and argv[3] == "-hosts"):
+        numHosts = numHostGen(argv[4])
+    else: numHosts = numHostGen("1")
+        
+    fileIn = argv[1]
+    fileOut = argv[2]
     
     if not fileIn.endswith(".gml"):
         print "support for gml formatted graphs only"
@@ -150,42 +168,63 @@ if __name__ == '__main__':
     yaml.update({"device":[], "switch":[], "router":[], "link":[]})
     # Add global switch
     yaml["switch"].append({"name":"s0"})
+    # Create mac address generator
+    ipv4fact = IPV4Factory()
+    ipv4fact.setSeed("10.0.0.0")
+    macfact = MACFactory()
+    macfact.setSeed("ff:ff:00:00:00:00")
+    loIP = ipv4fact.generate(0)
 
     for node in graph.nodes():
         if (node > 254):
             raise RuntimeError("Topologies with more than 255" 
                                + "nodes are not supported")
-        host = "h" + str(node)
+        # Add router and specify its local network
         router = "r" + str(node)
-        subnet = str(node)
-        yaml["device"].append({"name": host,
-                               "cmd": [
-                                    "route add -net 172.0.0.0 " 
-                                    + "netmask 255.255.0.0 "
-                                    + "gw 10.0." + subnet  + ".1 "
-                                    + "dev " + host + "-eth0",
-
-                                    "route add -net 10.0.0.0 "
-                                    + "netmask 255.255.0.0 "
-                                    + "gw 10.0." + subnet  + ".1 "
-                                    + "dev " + host + "-eth0"
-                               ]})
+        routerIP = ipv4fact.generate()       
         yaml["router"].append({"name": router,  
-                               "loIP": "10.0." + subnet + ".0/24"})
-        # Add a link to connect host to router
+                               "loIP":  loIP + "/24"})
+        # Add a local switch and connect it to the router
+        switch = "s0-" + router
+        yaml["switch"].append({"name": switch})
         yaml["link"].append({
             "node1": {"name": router,
                       "interface": router + "-eth0",
-                      "ip": "10.0." + subnet + ".1/24",
-                      "mac": "00:00:00:00:00:" + mac(node) + ":01"},
-            "node2": {"name": host,
-                      "interface": host + "-eth0", 
-                      "ip": "10.0." + subnet + ".2/24", 
-                      "mac": "00:00:00:00:00:" + mac(node) + ":02"} 
+                      "ip": routerIP + "/24",
+                      "mac": macfact.generate()},
+            "node2": switch
         })
+        nh = numHosts()
+        for i in range(0,nh):
+            host = "h" + str(i) + "-" + router
+            hostIP = ipv4fact.generate()
+            # Add host and update its route table
+            yaml["device"].append({"name": host,
+                                   "cmd": [
+                                        "route add -net 172.0.0.0 " 
+                                        + "netmask 255.255.0.0 "
+                                        + "gw " + routerIP + " "
+                                        + "dev " + host + "-eth0",
+
+                                        "route add -net 10.0.0.0 "
+                                        + "netmask 255.255.0.0 "
+                                        + "gw " + routerIP + " "
+                                        + "dev " + host + "-eth0"
+                                   ]})
+            # Add a link to connect host to the local switch
+            yaml["link"].append({
+                "node1": {"name": host,
+                          "interface": host + "-eth0", 
+                          "ip": hostIP + "/24", 
+                          "mac": macfact.generate()},
+                "node2": switch 
+            })
+        # Generate IP for next local network
+        loIP = ipv4fact.generate(254)
 
     numintf = {}
     subnetCount = 0
+    ipv4fact.setSeed("172.0.0.0")
     for edge in graph.edges():
         if (subnetCount > 65025):
             raise RuntimeError("Topologies with more than 65025 subnets are "
@@ -193,39 +232,39 @@ if __name__ == '__main__':
         router1 = "r" + str(edge[0])
         router2 = "r" + str(edge[1])
         
-        if router1 in numintf: numintf[router1] += 1 
-        else: numintf[router1] = 1
+        if (router1 in numintf): 
+            numintf[router1] += 1 
+        else: 
+            numintf[router1] = 1
 
-        if router2 in numintf: numintf[router2] += 1 
-        else: numintf[router2] = 1 
+        if (router2 in numintf): 
+            numintf[router2] += 1 
+        else: 
+            numintf[router2] = 1 
 
-        subnet = str(subnetCount / 255) + "." + str(subnetCount % 255) 
-        delay = getDelay(graph.node[edge[0]],graph.node[edge[1]]) / 2
+        delay = getDelay(graph.node[edge[0]],graph.node[edge[1]])
         yaml["link"].append({
             "node1": {"name": router1,
                       "interface": router1 + "-eth" + str(numintf[router1]),
-                      "ip": "172." + subnet + ".1/24", 
-                      "mac": "ff:00:00:" 
-                             + mac(subnetCount / 255) + ":" 
-                             + mac(subnetCount % 255) + ":01"}, 
+                      "ip": ipv4fact.generate() + "/24", 
+                      "mac": macfact.generate()}, 
             "node2": {"name": router2,
                       "interface": router2 + "-eth" + str(numintf[router2]),
-                      "ip": "172." + subnet + ".2/24", 
-                      "mac": "ff:00:00:" 
-                             + mac(subnetCount / 255) + ":" 
-                             + mac(subnetCount % 255) + ":02"},
+                      "ip": ipv4fact.generate() + "/24", 
+                      "mac": macfact.generate()},
             "delay": (str(delay) + "ms")
         })
-        subnetCount += 1
+        # Update IP factory so its ready for next subnet
+        ipv4fact.generate(254)
     # Connect all other routers to the global switch
+    ipv4fact.setSeed("172.0.254.0")
     for router in yaml["router"]:
-        if (router["name"] == "rs"): continue
         name = router["name"]
         yaml["link"].append({
             "node1": {"name": name,
                       "interface": name + "-eth" + str(numintf[name] + 1), 
-                      "ip": "172.0.254." + name[1:] + "/24", 
-                      "mac": "ff:ff:00:00:00:" + mac(name[1:])}, 
+                      "ip": ipv4fact.generate() + "/24", 
+                      "mac": macfact.generate()}, 
             "node2": "s0"
         })
     createQuaggaConfigs(yaml)
