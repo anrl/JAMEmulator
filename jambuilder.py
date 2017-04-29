@@ -18,8 +18,9 @@ from ipv4factory import IPV4Factory
 def printUsage():
     print "usage: sudo python " + argv[0] + " input output [options]"
     print "    -hosts n:    the number of hosts on each local network"
-    print "    -hosts m,s:  the number of host on each local will be normally"
-    print "                 distributed with mean m and standard deviation s" 
+    print "    -hosts m,s:  the number of host on each local network will be"
+    print "                 normally distributed with mean m and standard" 
+    print "                 deviation s" 
 
 
 def setFilePerms(path):
@@ -27,7 +28,7 @@ def setFilePerms(path):
     gid = grp.getgrnam("quagga").gr_gid
     os.chown(path, uid, gid)
 
-def numHostGen(args):
+def hostNumGen(args):
     params = args.split(",")
 
     if (len(params) == 1):
@@ -154,8 +155,8 @@ if __name__ == '__main__':
         exit()
     
     if (len(argv) == 5 and argv[3] == "-hosts"):
-        numHosts = numHostGen(argv[4])
-    else: numHosts = numHostGen("1")
+        numHosts = hostNumGen(argv[4])
+    else: numHosts = hostNumGen("1")
         
     fileIn = argv[1]
     fileOut = argv[2]
@@ -163,6 +164,7 @@ if __name__ == '__main__':
     if not fileIn.endswith(".gml"):
         print "support for gml formatted graphs only"
         exit()
+        
     graph = nx.read_gml(fileIn, label="id")
     yaml = dict()
     yaml.update({"device":[], "switch":[], "router":[], "link":[]})
@@ -220,15 +222,15 @@ if __name__ == '__main__':
                 "node2": switch 
             })
         # Generate IP for next local network
-        loIP = ipv4fact.generate(254)
+        loIP = ipv4fact.generate(256 - nh)
 
     numintf = {}
     subnetCount = 0
     ipv4fact.setSeed("172.0.0.0")
     for edge in graph.edges():
         if (subnetCount > 65025):
-            raise RuntimeError("Topologies with more than 65025 subnets are "
-                               + "not supported")
+            raise RuntimeError("Topologies with more than 65025 subnets are"
+                               + " not supported")
         router1 = "r" + str(edge[0])
         router2 = "r" + str(edge[1])
         
@@ -254,7 +256,7 @@ if __name__ == '__main__':
                       "mac": macfact.generate()},
             "delay": (str(delay) + "ms")
         })
-        # Update IP factory so its ready for next subnet
+        # Update IPV4 factory so its ready for next subnet
         ipv4fact.generate(254)
     # Connect all other routers to the global switch
     ipv4fact.setSeed("172.0.254.0")

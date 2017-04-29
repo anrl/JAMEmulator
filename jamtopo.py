@@ -84,13 +84,15 @@ class JAMTopo(Topo):
                 bw = i["bw"] if "bw" in i else 100
                 delay = i["delay"] if "delay" in i else "0ms"
                 loss = i["loss"] if "loss" in i else 0     
-                isDict1 = isinstance(i["node1"], dict)
-                isDict2 = isinstance(i["node2"], dict)
+       
+                if isinstance(i["node1"], dict): 
+                    name1 = i["node1"]["name"]
+                else: 
+                    name1 = i["node1"]
 
-                if isinstance(i["node1"], dict): name1 = i["node1"]["name"]
-                else: name1 = i["node1"]
-
-                if isinstance(i["node2"], dict): name2 = i["node2"]["name"]
-                else: name2 = i["node2"]
+                if isinstance(i["node2"], dict): 
+                    name2 = i["node2"]["name"]
+                else: 
+                    name2 = i["node2"]
                 
                 self.addLink(name1, name2, bw=bw, delay=delay, loss=loss)
