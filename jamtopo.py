@@ -28,31 +28,23 @@ class JAMTopo(Topo):
         checkDupEth(config)
         groups = ["cloud", "fog", "device"]
         nodes = dict()
-        counter = 0
 
         for i in groups:
             if (i in config):
                 for j in config[i]: 
-                    # If host IP isn't specified in config then assign one        
-                    if ("ip" in j): 
-                        ip = j["ip"]
-                    elif (counter < 255):
-                         ip = "10.0.0." + str(counter)
-                         counter += 1
-                    else:
-                        msg = "Max number of hosts reached\n" 
-                        + "To run a larger topology, host IPs " 
-                        + "must be configured explicitly"
-                        raise RuntimeError(msg)
                     # Check if the CPU resources available to host are restricted
-                    cpu = j["cpu"] if "cpu" in j else 1.0 
-                    nodes[j["name"]] = self.addHost(j["name"], ip=ip, cpu=cpu)
+                    cpu = j["cpu"] if "cpu" in j else 1.0      
+                    if ("ip" in j): 
+                        self.addHost(j["name"], ip=ip, cpu=cpu)
+                    else:
+                        self.addHost(j["name"], cpu=cpu)
+
 
         if (not "switch" in config or len(config["switch"]) == 0):
             raise RuntimeError("Topology must have at least one switch")
         else:
             for i in config["switch"]:
-                nodes[i["name"]] = self.addSwitch(i["name"])
+                self.addSwitch(i["name"])
 
         if ("router" in config):
             # Directory where this file / script is located"
@@ -84,15 +76,13 @@ class JAMTopo(Topo):
                 bw = i["bw"] if "bw" in i else 100
                 delay = i["delay"] if "delay" in i else "0ms"
                 loss = i["loss"] if "loss" in i else 0     
-       
+
                 if isinstance(i["node1"], dict): 
                     name1 = i["node1"]["name"]
                 else: 
                     name1 = i["node1"]
-
                 if isinstance(i["node2"], dict): 
                     name2 = i["node2"]["name"]
                 else: 
-                    name2 = i["node2"]
-                
+                    name2 = i["node2"]    
                 self.addLink(name1, name2, bw=bw, delay=delay, loss=loss)

@@ -150,13 +150,19 @@ def createQuaggaConfigs(yaml):
 
 
 if __name__ == '__main__':    
+
     if len(argv) < 3: 
         printUsage()
         exit()
-    
-    if (len(argv) == 5 and argv[3] == "-hosts"):
-        numHosts = hostNumGen(argv[4])
-    else: numHosts = hostNumGen("1")
+    getNumHosts = hostNumGen("1")
+
+    for i in range (3, len(argv)):
+        if (argv[i] == "-host" and len(argv) == i + 2):
+            getNumHosts = hostNumGen(argv[i + 1])
+        elif (argv[i] == "-cloud" and len(argv) == i + 2):
+            numClouds = argv[i + 1]
+        elif (argv[i] == "-fog" and len(argv) == i + 2):
+            numFogs = argv[i + 1]
         
     fileIn = argv[1]
     fileOut = argv[2]
@@ -169,7 +175,7 @@ if __name__ == '__main__':
     yaml = dict()
     yaml.update({"device":[], "switch":[], "router":[], "link":[]})
     # Add global switch
-    yaml["switch"].append({"name":"s0"})
+    yaml["switch"].append({"name":"s0-gbl"})
     # Create mac address generator
     ipv4fact = IPV4Factory()
     ipv4fact.setSeed("10.0.0.0")
@@ -196,7 +202,7 @@ if __name__ == '__main__':
                       "mac": macfact.generate()},
             "node2": switch
         })
-        nh = numHosts()
+        nh = getNumHosts()
         for i in range(0,nh):
             host = "h" + str(i) + "-" + router
             hostIP = ipv4fact.generate()
@@ -222,7 +228,7 @@ if __name__ == '__main__':
                 "node2": switch 
             })
         # Generate IP for next local network
-        loIP = ipv4fact.generate(256 - nh)
+        loIP = ipv4fact.generate(256 - nh - 1)
 
     numintf = {}
     subnetCount = 0
@@ -267,7 +273,7 @@ if __name__ == '__main__':
                       "interface": name + "-eth" + str(numintf[name] + 1), 
                       "ip": ipv4fact.generate() + "/24", 
                       "mac": macfact.generate()}, 
-            "node2": "s0"
+            "node2": "s0-gbl"
         })
     createQuaggaConfigs(yaml)
     dump(yaml, open(fileOut, "w"), default_flow_style=False)
