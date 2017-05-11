@@ -10,17 +10,18 @@ import numpy as np
 from sys import argv, exit
 from yaml import dump
 from geopy.distance import vincenty
-
 from macfactory import MACFactory
 from ipv4factory import IPV4Factory
 
 
 def printUsage():
     print "usage: sudo python " + argv[0] + " input output [options]"
-    print "    -hosts n:    the number of hosts on each local network"
-    print "    -hosts m,s:  the number of host on each local network will be"
+    print "    -host n:     the number of hosts on each local network"
+    print "    -host m,s:   the number of host on each local network will be"
     print "                 normally distributed with mean m and standard" 
-    print "                 deviation s" 
+    print "                 deviation s"
+    print "    -cloud n:    the number of cloud nodes in the network"
+    print "    -fog n:      the number of fog nodes in the network" 
 
 
 def setFilePerms(path):
@@ -28,27 +29,40 @@ def setFilePerms(path):
     gid = grp.getgrnam("quagga").gr_gid
     os.chown(path, uid, gid)
 
+
 def hostNumGen(args):
     params = args.split(",")
 
     if (len(params) == 1):
         def uniform(): 
-            return int(args[0])
+            n = int(args[0])
+            if (n < 0): 
+                return 0
+            elif (n > 253): 
+                return 253
+            else:
+                return n
         return uniform
     else:
         def normal():
             mu, sigma = params
             sample = np.random.normal(float(mu), float(sigma), 1)[0]
-            if (sample < 0): return 0
-            else: return int(round(sample))
+            if (sample < 0): 
+                return 0
+            elif (sample > 253): 
+                return 253
+            else: 
+                return int(round(sample))
         return normal
 
 
 """ Calculate the propagation delay(ms) between nodes 
     based on their geographical location """
 def getDelay(node1, node2): 
-    if (not "Latitude" in node1 or not "Longitude" in node1): return 0
-    if (not "Latitude" in node2 or not "Longitude" in node2): return 0
+    if (not "Latitude" in node1 or not "Longitude" in node1): 
+        return 0
+    if (not "Latitude" in node2 or not "Longitude" in node2): 
+        return 0
     loc1 = (node1["Latitude"], node1["Longitude"])
     loc2 = (node2["Latitude"], node2["Longitude"])
     distance = vincenty(loc1, loc2).kilometers
@@ -149,46 +163,89 @@ def createQuaggaConfigs(yaml):
         setupVtysh(router, configPath)
 
 
-if __name__ == '__main__':    
-
+if __name__ == '__main__':
     if len(argv) < 3: 
         printUsage()
         exit()
-    getNumHosts = hostNumGen("1")
-
-    for i in range (3, len(argv)):
-        if (argv[i] == "-host" and len(argv) == i + 2):
-            getNumHosts = hostNumGen(argv[i + 1])
-        elif (argv[i] == "-cloud" and len(argv) == i + 2):
-            numClouds = argv[i + 1]
-        elif (argv[i] == "-fog" and len(argv) == i + 2):
-            numFogs = argv[i + 1]
-        
     fileIn = argv[1]
     fileOut = argv[2]
     
     if not fileIn.endswith(".gml"):
         print "support for gml formatted graphs only"
         exit()
-        
+    # Set default values
+    getNumHosts = hostNumGen("1")
+    numClouds = 0
+    numFogs = 0
+    # Parse any extra command line arguments and update the default
+    # values if specified
+    for i in range (3, len(argv)):
+        if (argv[i] == "-host" and len(argv) >= i + 2):
+            getNumHosts = hostNumGen(argv[i + 1])
+        elif (argv[i] == "-cloud" and len(argv) >= i + 2):
+            numClouds = int(argv[i + 1])
+        elif (argv[i] == "-fog" and len(argv) >= i + 2):
+            numFogs = int(argv[i + 1])
+    # Parse graph file and get the total number of nodes
     graph = nx.read_gml(fileIn, label="id")
+    totalNodes = nx.number_of_nodes(graph)
+  
+    if (totalNodes > 254):
+            raise RuntimeError("Topologies with more than 254 " 
+                               + "nodes are not supported")
+    if (totalNodes < (numClouds + numFogs)):
+        raise RuntimeError("The number of cloud and fog nodes cannot "
+                           + "be greater than the total number of "
+                           + "nodes in the network")
+    # Create a list of each node and its degree in the graph
+    nodeDegrees = []
+    for node in nx.nodes(graph):
+        nodeDegrees.append((node,graph.degree(node)))
+    # Sort the list by degree in descending order
+    nodeDegrees.sort(key=lambda tup: tup[1], reverse=True)
+    # Create the yaml object for the configuration file with the 
+    # default lists
     yaml = dict()
     yaml.update({"device":[], "switch":[], "router":[], "link":[]})
+    # If the topology has clouds, add a corresponding list to the yaml
+    if (numClouds > 0):
+        yaml.update({"cloud": []})
+    # If the topology has fogs, add a corresponding list to the yaml
+    if (numFogs > 0):
+        yaml.update({"fog": []})
     # Add global switch
     yaml["switch"].append({"name":"s0-gbl"})
-    # Create mac address generator
-    ipv4fact = IPV4Factory()
-    ipv4fact.setSeed("10.0.0.0")
+    # Create MAC address generator
     macfact = MACFactory()
     macfact.setSeed("ff:ff:00:00:00:00")
+    # Create IPV4 address generator
+    ipv4fact = IPV4Factory()
+    ipv4fact.setSeed("10.0.0.0")
+    # Generate IP for first local network
     loIP = ipv4fact.generate(0)
 
-    for node in graph.nodes():
-        if (node > 254):
-            raise RuntimeError("Topologies with more than 255" 
-                               + "nodes are not supported")
+    while(len(nodeDegrees) > 0):
+        # Create the clouds using nodes at the center of the network
+        if (numClouds > 0):
+            node = nodeDegrees.pop(0)
+            group = yaml["cloud"]
+            cpu = 0.10
+            bw = 100
+            numClouds -= 1
+        # Create the fogs using nodes at the edge of the network
+        elif (numFogs > 0):
+            node = nodeDegrees.pop(-1)
+            group = yaml["fog"]
+            numFogs -= 1
+            cpu = 0.05
+            bw = 50
+        else:
+            node = nodeDegrees.pop(0)
+            group = yaml["device"]
+            cpu = 0.01
+            bw = 10
         # Add router and specify its local network
-        router = "r" + str(node)
+        router = "r" + str(node[0])
         routerIP = ipv4fact.generate()       
         yaml["router"].append({"name": router,  
                                "loIP":  loIP + "/24"})
@@ -200,46 +257,45 @@ if __name__ == '__main__':
                       "interface": router + "-eth0",
                       "ip": routerIP + "/24",
                       "mac": macfact.generate()},
-            "node2": switch
+            "node2": switch,
+            "bw": bw
         })
         nh = getNumHosts()
         for i in range(0,nh):
             host = "h" + str(i) + "-" + router
             hostIP = ipv4fact.generate()
             # Add host and update its route table
-            yaml["device"].append({"name": host,
-                                   "cmd": [
-                                        "route add -net 172.0.0.0 " 
-                                        + "netmask 255.255.0.0 "
-                                        + "gw " + routerIP + " "
-                                        + "dev " + host + "-eth0",
+            group.append({"name": host,
+                         "cpu": cpu,
+                         "cmd": [
+                             "route add -net 172.0.0.0 " 
+                             + "netmask 255.255.0.0 "
+                             + "gw " + routerIP + " "
+                             + "dev " + host + "-eth0",
 
-                                        "route add -net 10.0.0.0 "
-                                        + "netmask 255.255.0.0 "
-                                        + "gw " + routerIP + " "
-                                        + "dev " + host + "-eth0"
-                                   ]})
+                             "route add -net 10.0.0.0 "
+                             + "netmask 255.255.0.0 "
+                             + "gw " + routerIP + " "
+                             + "dev " + host + "-eth0"
+                       ]})
             # Add a link to connect host to the local switch
             yaml["link"].append({
                 "node1": {"name": host,
-                          "interface": host + "-eth0", 
+                          "interface": host + "-eth0",
                           "ip": hostIP + "/24", 
                           "mac": macfact.generate()},
-                "node2": switch 
+                "node2": switch,
+                "bw": bw,
             })
         # Generate IP for next local network
         loIP = ipv4fact.generate(256 - nh - 1)
 
     numintf = {}
-    subnetCount = 0
     ipv4fact.setSeed("172.0.0.0")
     for edge in graph.edges():
-        if (subnetCount > 65025):
-            raise RuntimeError("Topologies with more than 65025 subnets are"
-                               + " not supported")
         router1 = "r" + str(edge[0])
         router2 = "r" + str(edge[1])
-        
+        # Keep track of the number of interfaces on each router
         if (router1 in numintf): 
             numintf[router1] += 1 
         else: 
@@ -249,8 +305,9 @@ if __name__ == '__main__':
             numintf[router2] += 1 
         else: 
             numintf[router2] = 1 
-
+        # Calculate the transmission delay on the link connecting the nodes
         delay = getDelay(graph.node[edge[0]],graph.node[edge[1]])
+        # Add the link to the yaml
         yaml["link"].append({
             "node1": {"name": router1,
                       "interface": router1 + "-eth" + str(numintf[router1]),
@@ -264,7 +321,7 @@ if __name__ == '__main__':
         })
         # Update IPV4 factory so its ready for next subnet
         ipv4fact.generate(254)
-    # Connect all other routers to the global switch
+    # Connect all routers to the global switch
     ipv4fact.setSeed("172.0.254.0")
     for router in yaml["router"]:
         name = router["name"]

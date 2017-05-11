@@ -33,7 +33,7 @@ class JAMTopo(Topo):
             if (i in config):
                 for j in config[i]: 
                     # Check if the CPU resources available to host are restricted
-                    cpu = j["cpu"] if "cpu" in j else 1.0      
+                    cpu = j["cpu"] if "cpu" in j else 1.0
                     if ("ip" in j): 
                         self.addHost(j["name"], ip=ip, cpu=cpu)
                     else:
