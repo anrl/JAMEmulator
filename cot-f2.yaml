@@ -1,0 +1,73 @@
+ # YAML
+ #
+ # Below is a graphical resprentation of the topology specified by this example
+ #
+ #                           [ cloud1 ]
+ #                               |                          fog2
+ #                               |                           |
+ #                               | -------------------------[s1]-ap1
+ #                               | |                             |
+ #                  [ fog1 ]---[ s0 ]---[ ap0 ]               mob4,5,6
+ #                                         |
+ #                               ---------------------- 
+ #                               |         |          |
+ #                           [ mob1 ]   [ mob2 ]  [ mob3 ]
+ #
+
+cloud:
+ - name: cloud1              # required - specifies the name of the host node
+   cpu:  0.1                 # optional - places a restriction on the amount of cpu (%) available to host
+   cmd: 'ping -c 10 8.8.8.8' # optional - specifies a command to run on the host node. Hosts can run any command available on the OS
+fog:
+ - name: fog1                # required - specifies the name of the host node
+   cpu: 0.2                  # optional - places a restriction on the amount of cpu (%) available to host
+   cmd: 'ping -c 10 8.8.8.8' # optional - specifies a command to run on the host node. Hosts can run any command available on the OS
+ - name: fog2
+   cpu: 0.2
+   cmd: 'ping -c 10 8.8.8.8'
+mobile:
+ - name: mob1                # required - specifies the name of the host node
+   cpu: 0.01                 # optional - places a restriction on the amount of cpu (%) available to host
+   cmd: 'ping -c 10 8.8.8.8' # optional - specifies a command to run on the host node. Hosts can run any command available on the OS
+ - name: mob2
+ - name: mob3
+ - name: mob4
+ - name: mob5 
+ - name: mob6
+switch:
+ - name: s0                  # required - specifies the name of the switch
+ - name: s1
+accessPoint:
+ - name: ap0                 # required - specifies the name of the access point
+ - name: ap1                 # required - specifies the name of the access point
+link:
+# links for fog1
+ - node1: cloud1             # required - name of first node in the link
+   node2: s0                 # required - name of second node in the link
+   bw: 200                   # optional - specifies the link bandwidth (Mb). Default is 100 
+   delay: '1ms'              # optional - specifies the link delay. Default is 0ms
+   loss: 0.5                 # optional - specifies the link loss rate (%). Default is 0
+ - node1: fog1
+   node2: s0
+ - node1: s0
+   node2: ap0        
+ - node1: mob1              
+   node2: ap0                
+ - node1: mob2
+   node2: ap0
+ - node1: mob3
+   node2: ap0
+# links for fog2
+ - node1: s0
+   node2: s1
+ - node1: fog2
+   node2: s1
+ - node1: s1
+   node2: ap1
+ - node1: mob4
+   node2: ap1
+ - node1: mob5
+   node2: ap1
+ - node1: mob6
+   node2: ap1
+         

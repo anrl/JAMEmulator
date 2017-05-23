@@ -95,22 +95,37 @@ if __name__ == '__main__':
         net = Mininet(controller=Controller, link=TCLink, #host=CPULimitedHost
                       switch=OVSKernelSwitch, accessPoint=OVSKernelAP)
         c0 = net.addController('c0')   
-        groups = ['cloud', 'fog', 'device']     
+        groups = ['cloud', 'fog', 'device']
+        mobs = {}
+        aps = {}
         for i in groups:
             if (i in config): 
                 for j in config[i]:
+                    print j
                     cpu = j['cpu'] if 'cpu' in j else 1.0
                     net.addHost(j['name']) #, cpu=cpu)  There is currently a bug with Mininet-Wifi and CPULimitedHost
-        if ('mobile' in config): 
+        if ('mobile' in config):
+            xcoord = 20
+            ycoord = 20
             for i in config['mobile']:
                 cpu = i['cpu'] if 'cpu' in i else 1.0
-                net.addStation(i['name']) #, cpu=cpu)
+                coord = '%s,%s,%s' % (xcoord, ycoord, 0)
+                xcoord += 40
+                ycoord += 5
+                mobs[i['name']] = net.addStation(i['name'], position=coord) #, cpu=cpu)
+                mobs[i['name']].setRange(20)
         if ('switch' in config):
             for i in config['switch']:
                 net.addSwitch(i['name'])
         if ('accessPoint' in config):
+            xcoord = 60
+            ycoord = 60            
             for i in config['accessPoint']:
-                net.addAccessPoint(i['name'])
+                coord = '%s,%s,%s' % (xcoord, ycoord, 0)
+                xcoord += 80
+                ycoord += 10                
+                aps[i['name']] = net.addAccessPoint(i['name'], position=coord)
+                aps[i['name']].setRange(40)
         net.configureWifiNodes()       
         if ('link' in config):
             for i in config['link']:
@@ -132,6 +147,7 @@ if __name__ == '__main__':
         #         print '%s: %s' % (host.name, line)
         # app = ConsoleApp(net)
         # app.mainloop()
+        net.plotGraph(max_x=300, max_y=100)
         CLI(net)
         net.stop()
     except:
