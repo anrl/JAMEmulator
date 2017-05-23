@@ -1,4 +1,35 @@
-# JAMEmulator
+# JAMEmulator (WiFi Version)
+
+This is based on Mininet-WiFi. It is useful for emulating
+configurations with node disconnections. 
+
+To get started, get Mininet-WiFi. Install it following the instructions
+at: https://github.com/intrig-unicamp/mininet-wifi
+
+Now, install this repo. Use the following command:
+
+git clone -b console https://github.com/anrl/JAMEmulator.git
+
+You may want to install Python-Yaml parser
+
+sudo apt install python-yaml should do. Otherwise,
+do aptitude search yaml and it should show the package to install for
+your Ubuntu version.
+
+Issue the following command to run the emulator with two fogs.
+
+sudo python emulator.py cot-f2.yaml
+
+
+With three fogs
+
+sudo python emulator.py cot-f2.yaml
+
+
+
+
+
+
 
 Below are some useful to Mininet-Wifi commands that can be run in the command line. 
 
