@@ -20,11 +20,23 @@ Issue the following command to run the emulator with two fogs.
 
     sudo python emulator.py cot-f2.yaml
 
-
 With three fogs
 
     sudo python emulator.py cot-f2.yaml
 
+
+Once you run the above command you will see the MiniNet-WiFi Graph. It
+displays the wireless zones of each WiFi element in the topology. Non
+WiFi elements in the topology are not shown in the graph.
+
+You can change the Access Point's wireless range by issuing the
+following command in the CLI
+
+    ap1.setRange(80)
+    
+You can give a range to include or exclude a mobile node in the AP
+range and emulator disconnections and connections. The range can be
+adjusted while the system is running.
 
 
 
