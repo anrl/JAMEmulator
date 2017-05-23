@@ -8,7 +8,7 @@ at: https://github.com/intrig-unicamp/mininet-wifi
 
 Now, install this repo. Use the following command:
 
-git clone -b console https://github.com/anrl/JAMEmulator.git
+    git clone -b console https://github.com/anrl/JAMEmulator.git
 
 You may want to install Python-Yaml parser
 
@@ -18,12 +18,12 @@ your Ubuntu version.
 
 Issue the following command to run the emulator with two fogs.
 
-sudo python emulator.py cot-f2.yaml
+    sudo python emulator.py cot-f2.yaml
 
 
 With three fogs
 
-sudo python emulator.py cot-f2.yaml
+    sudo python emulator.py cot-f2.yaml
 
 
 
